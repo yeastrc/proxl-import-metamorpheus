@@ -1,0 +1,27 @@
+Usage:
+  java -jar metamorph2Proxl.jar -x pepXML file path -o output file path
+                               -f fasta file path -c conf file (toml file)
+  
+ Options:
+  
+     -x or --pepxml       : Required. The full path to the pepXML file
+     
+     -o or --out-file     : Required. Full path (including file name) to which
+                            to write the Proxl XML
+  
+     -k or --kojak-conf   : Required. Full path to  configuration file
+                            used for the MetaMorpheus cross-linking search.
+                            (e.g. XLSearchTaskconfig.toml)
+                          
+     -f or --fasta-file   : Required. Full path to the fasta file used in
+                            the search.
+                          
+ 
+ Example:
+ 
+  java -jar metamorph2Proxl.jar -x ./results.pep.xml -o ./results.proxl.xml\
+  -f /data/mass_spec/yeast.fa -c ./XLSearchTaskconfig.toml
+
+  More information: https://github.com/yeastrc/proxl-import-metamorpheus
+
+  
