@@ -9,6 +9,8 @@ MetaMorpheus authors to make the converter more robust. As of this writing, only
 DSS and DSSO are supported, and only the default fixed (Carbamidomethyl of C. and
 Carbamidomethyl of U.) and variable (Oxidation of M.) modifications are supported.
 
+After working with MetaMorpheus authors, I expect all cross-linkers and modification
+types to be supported with minimal user input.
 
 How To Run
 -------------
