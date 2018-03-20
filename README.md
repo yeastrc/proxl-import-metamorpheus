@@ -26,7 +26,7 @@ Command line documentation
 ---------------------------
 
 Usage:
-  java -jar metamorph2Proxl.jar -x pepXML file path -o output file path
+  java -jar metamorph2ProxlXML.jar -x pepXML file path -o output file path
                                -f fasta file path -c conf file (toml file)
   
  Options:
@@ -46,7 +46,7 @@ Usage:
  
  Example:
  
-  java -jar metamorph2Proxl.jar -x ./results.pep.xml -o ./results.proxl.xml\
+  java -jar metamorph2ProxlXML.jar -x ./results.pep.xml -o ./results.proxl.xml\
   -f /data/mass_spec/yeast.fa -c ./XLSearchTaskconfig.toml
 
   More information: https://github.com/yeastrc/proxl-import-metamorpheus
