@@ -12,6 +12,9 @@ public class ProteinInferenceUtils {
 	 */
 	public static boolean proteinContainsReportedPeptide( String proteinSequence, String reportedPeptide ) {
 		
+		if( reportedPeptide.equals( "" ) )
+			throw new IllegalArgumentException( "Peptide sequence cannot be empty." );
+		
 		// handle leucine, iso-leucine
 		reportedPeptide = reportedPeptide.replaceAll( "L", "I" );
 		proteinSequence = proteinSequence.replaceAll( "L",  "I" );

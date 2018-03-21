@@ -13,8 +13,8 @@ import java.util.regex.Pattern;
 public class ScanParsingUtils {
 	
 	/**
-	 * Get the name of the scan file from the reported scan. E.g. QEP2_2016_0121_RJ_68_205_comet.00965.00965.3
-	 * would return QEP2_2016_0121_RJ_68_205_comet
+	 * Get name of scan file from reported scan string in pepXML for MetaMorpheus data
+	 * E.g., QEP2_2016_0121_RJ_73_206_xlink05.39287 would return QEP2_2016_0121_RJ_73_206_xlink05
 	 * 
 	 * @param reportedScan
 	 * @return
@@ -22,13 +22,13 @@ public class ScanParsingUtils {
 	 */
 	public static String getFilenameFromReportedScan( String reportedScan ) throws Exception {
 		
-		Pattern r = Pattern.compile( "^(.+)\\.\\d+$" );
+		Pattern r = Pattern.compile( "^([^\\.\\s]+)\\.\\d+$" );
 		Matcher m = r.matcher( reportedScan );
 		
 		if( m.matches() ) {
 			return m.group( 1 );
 		} else {
-			return null;
+			throw new Exception( "Invalid syntax for spectrum id: " + reportedScan );
 		}
 		
 	}
