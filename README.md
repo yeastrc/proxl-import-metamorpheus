@@ -38,7 +38,7 @@ Usage:
      -o or --out-file     : Required. Full path (including file name) to which
                             to write the Proxl XML
   
-     -k or --kojak-conf   : Required. Full path to  configuration file
+     -c or --conf   : Required. Full path to  configuration file
                             used for the MetaMorpheus cross-linking search.
                             (e.g. XLSearchTaskconfig.toml)
                           

@@ -13,7 +13,7 @@
 	
     <property name="deploy" value="deploy" />
 
-	<property name="src" value="src" />
+	<property name="src" value="src/main" />
 	<property name="classes" value="classes" />	
 
 	<available file=".git" type="dir" property="git.present"/>
@@ -22,7 +22,7 @@
     <target name="create_run_jar"  depends="compile,prepare,git.revision">
     	
 		<path id="build.classpath">
-		  <fileset dir="lib">
+		  <fileset dir="lib/main">
 		    <include name="**/*.jar" />
 		  </fileset>
 		</path>
@@ -60,7 +60,7 @@
         	
             <zipfileset src="jar-in-jar-loader.zip"/>
 	        <fileset dir="${classes}"/>
-            <zipfileset dir="lib" />
+            <zipfileset dir="lib/main" />
         </jar>
     </target>
 
@@ -156,7 +156,7 @@
 	<!-- ================================================================================== -->
     <target name="compile" depends="clean">
     	<!-- <echo message="${toString:compile.classpath}"/> -->
-        <javac includeantruntime="false"  debug="on" srcdir="src" destdir="${classes}" source="${java_source}" target="${java_target}"  encoding="${java.source.character.set}" >
+        <javac includeantruntime="false"  debug="on" srcdir="src/main" destdir="${classes}" source="${java_source}" target="${java_target}"  encoding="${java.source.character.set}" >
             <classpath refid="compile.classpath"/>
         </javac>
 
@@ -177,7 +177,7 @@
 	
 	<!-- classpath  -->
     <path id="compile.classpath">
-    	<fileset dir="lib">
+    	<fileset dir="lib/main">
         	<include name="**/*.jar"/>
       	</fileset>
     </path>
