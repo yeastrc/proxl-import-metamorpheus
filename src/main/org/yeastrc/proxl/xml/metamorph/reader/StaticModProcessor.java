@@ -76,7 +76,53 @@ public class StaticModProcessor {
 			
 		}
 		
+		/* todo: fix this.
+		// remove the static mods from the mods for all peptides
+		for( MetaMorphReportedPeptide reportedPeptide : metaMorphResults.keySet() ) {
+			
+			removeStaticModsFromPeptide( reportedPeptide.getPeptide1(), staticMods );
+			
+			if( reportedPeptide.getPeptide2() != null )
+				removeStaticModsFromPeptide( reportedPeptide.getPeptide2(), staticMods );
+			
+		}
+		*/
+		
+		
+		
 		return staticMods;
+	}
+	
+	
+	private void removeStaticModsFromPeptide( MetaMorphPeptide peptide, Map<String, BigDecimal> staticMods ) {
+				
+		if( peptide.getModifications() == null || peptide.getModifications().keySet().size() < 1 )
+			return;
+		
+		Map<Integer,BigDecimal> modsToRemove = new HashMap<>();
+		
+		for( int position : peptide.getModifications().keySet() ) {
+				
+			String pepModResidue = peptide.getSequence().substring( position - 1, position );
+
+			if( staticMods.containsKey( pepModResidue ) ) {
+					
+				if( peptide.getModifications().get( position ).contains( staticMods.get( pepModResidue ) ) )
+					modsToRemove.put( position, staticMods.get( pepModResidue ) );
+					
+			}
+		}
+
+		for( int position : modsToRemove.keySet() ) {
+			
+			peptide.getModifications().get( position ).remove( modsToRemove.get( position ) );
+			
+			if( peptide.getModifications().get( position ).size() < 1 )
+				peptide.getModifications().remove( position );
+						
+		}
+		
+		
 	}
 	
 	
