@@ -5,8 +5,8 @@ Use this program to convert the results of a MetaMorpheus cross-linking analysis
 proxl XML suitable for import into the proxl web application.
 
 As of this writing, only DSS and DSSO cross-linkers are supported. Loop-link results
-are not supported because of a bug in the pepXML output for loop-links. Deadends hits
-are also skipped because of:
+are not supported because of a bug in the pepXML output for loop-links. Deadends/mono-link
+hits are also skipped because of:
 
 	"Deadend hits are reported in a less-than-optimal way. The mass of the cross-linker
 	is reported as the "massDiff" of the hit (which is usually an indicator of error of
