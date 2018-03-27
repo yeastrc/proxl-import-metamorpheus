@@ -16,7 +16,7 @@ import org.yeastrc.proxl.xml.metamorph.objects.AnalysisParameters;
 import org.yeastrc.proxl.xml.metamorph.objects.MetaMorphPSM;
 import org.yeastrc.proxl.xml.metamorph.objects.MetaMorphReportedPeptide;
 import org.yeastrc.proxl.xml.metamorph.reader.MetaMorphResultsParser;
-import org.yeastrc.proxl.xml.metamorph.utils.ModUtils;
+import org.yeastrc.proxl.xml.metamorph.reader.StaticModProcessor;
 import org.yeastrc.proxl.xml.metamorph.utils.PepXMLUtils;
 import org.yeastrc.proxl_import.api.xml_dto.AnnotationSortOrder;
 import org.yeastrc.proxl_import.api.xml_dto.ConfigurationFile;
@@ -140,13 +140,33 @@ public class XMLBuilder {
 			xlinkMass.setMass( BigDecimal.valueOf( mass ) );
 		}
 		
+		
+		// parse the data from the pepXML into a java data structure suitable for writing as ProXL XML
+		Map<MetaMorphReportedPeptide, Collection<MetaMorphPSM>> resultsByReportedPeptide = 
+				MetaMorphResultsParser.getInstance().getResultsFromAnalysis( analysis );
+		
+		// remove the static mods and capture those here.
+		System.err.print( "\tFinding static mods..." );
+		Map<String, BigDecimal> staticMods = StaticModProcessor.createInstance().processStaticModsFromResults( resultsByReportedPeptide );
+		System.err.println( "Done." );
+		
+		if( staticMods.keySet().size() < 1 ) {
+			System.err.println( "\t\tFound no static mods." );
+		} else {
+			System.err.println( "\t\tFound: " );
+			for( String residue : staticMods.keySet() ) {
+				System.err.println( "\t\t\t" + residue + " : " + staticMods.get( residue ) );
+			}
+		}
+		
+		
 		//
 		// Define the static mods
 		//
 		StaticModifications smods = new StaticModifications();
 		proxlInputRoot.setStaticModifications( smods );
 		
-		for( String moddedResidue : analysis.getConfReader().getStaticModifications().keySet() ) {
+		for( String moddedResidue : staticMods.keySet() ) {
 				
 				StaticModification xmlSmod = new StaticModification();
 				xmlSmod.setAminoAcid( moddedResidue );
@@ -161,9 +181,6 @@ public class XMLBuilder {
 		ReportedPeptides reportedPeptides = new ReportedPeptides();
 		proxlInputRoot.setReportedPeptides( reportedPeptides );
 		
-		// parse the data from the pepXML into a java data structure suitable for writing as ProXL XML
-		Map<MetaMorphReportedPeptide, Collection<MetaMorphPSM>> resultsByReportedPeptide = 
-				MetaMorphResultsParser.getInstance().getResultsFromAnalysis( analysis );
 		
 		// create a unique set of peptides found, to ensure each one is found in at least 
 		// one of the reported proteins
@@ -211,7 +228,7 @@ public class XMLBuilder {
 							
 							xmlModification.setMass( modMass );
 							xmlModification.setPosition( new BigInteger( String.valueOf( position ) ) );
-							xmlModification.setIsMonolink( ModUtils.isMonolink( modMass, analysis.getConfReader() ) );
+							//xmlModification.setIsMonolink( ModUtils.isMonolink( modMass, analysis.getConfReader() ) );
 							
 						}
 					}
@@ -261,7 +278,7 @@ public class XMLBuilder {
 							
 							xmlModification.setMass( modMass );
 							xmlModification.setPosition( new BigInteger( String.valueOf( position ) ) );
-							xmlModification.setIsMonolink( ModUtils.isMonolink( modMass, analysis.getConfReader() ) );
+							//xmlModification.setIsMonolink( ModUtils.isMonolink( modMass, analysis.getConfReader() ) );
 							
 						}
 					}

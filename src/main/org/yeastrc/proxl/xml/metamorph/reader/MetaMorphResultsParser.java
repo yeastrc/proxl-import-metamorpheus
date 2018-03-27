@@ -49,12 +49,30 @@ public class MetaMorphResultsParser {
 				for( SearchResult searchResult : spectrumQuery.getSearchResult() ) {
 					for( SearchHit searchHit : searchResult.getSearchHit() ) {
 						
+						// skip looplinks for now.
+						if( PepXMLUtils.getHitType( searchHit ) == SearchConstants.LINK_TYPE_LOOPLINK )
+							continue;
 						
 						// get our result
 						MetaMorphPSM result = getResult( runSummary, spectrumQuery, searchHit );
 						
 						// get our reported peptide
 						MetaMorphReportedPeptide reportedPeptide = getReportedPeptide( searchHit, analysis );
+						
+						// skip this if reportedPeptide is null
+						if( reportedPeptide == null )
+							continue;
+						
+						if( reportedPeptide.getPeptide1().getSequence() == null ) {
+							System.err.println( "\tWARNING: Got null sequence for peptide for: " + spectrumQuery.getSpectrum() + "!! Skipping this scan." );
+							continue;
+						}
+						
+						if( reportedPeptide.getPeptide2() != null && reportedPeptide.getPeptide2().getSequence() == null ) {
+							System.err.println( "\tWARNING: Got null sequence for peptide for: " + spectrumQuery.getSpectrum() + "!! Skipping this scan." );
+							continue;
+						}
+						
 						
 						if( !results.containsKey( reportedPeptide ) )
 							results.put( reportedPeptide, new ArrayList<MetaMorphPSM>() );

@@ -49,6 +49,9 @@ public class StaticModProcessor {
 		// if so, that is a static/fixed mod.
 		for( MetaMorphReportedPeptide reportedPeptide : metaMorphResults.keySet() ) {
 			
+			if( foundMods.keySet().size() < 1 )
+				break;	// no need to keep looking, there are no static mods.
+			
 			{
 				Map<String, Collection<BigDecimal>> modsToDelete = getModsToDelete( reportedPeptide.getPeptide1(), foundMods );
 				removeModsToDelete( modsToDelete, foundMods );
