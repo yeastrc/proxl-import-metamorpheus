@@ -10,11 +10,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.yeastrc.proxl.xml.metamorph.objects.MetaMorphPSM;
 import org.yeastrc.proxl.xml.metamorph.objects.MetaMorphPeptide;
 import org.yeastrc.proxl.xml.metamorph.objects.MetaMorphReportedPeptide;
+import org.yeastrc.proxl.xml.metamorph.utils.ModUtils;
 
 /**
- * Take parsed results, determine which mods are static mods, and remove
- * those mods from each of the processed peptides. Return a map of residue=>mod mass
- * for all static mods in the result set.
+ * Use experimental results to infer static mods
  * 
  * @author mriffle
  *
@@ -24,9 +23,8 @@ public class StaticModProcessor {
 	public static StaticModProcessor createInstance() { return new StaticModProcessor(); }
 	
 	/**
-	 * For the given MetaMorpheus results, find all fixed/static mods, remove those as a mod for
-	 * the peptides (static mods are not included in mod lists) and return the map of found static
-	 * mods for inclusion in proxl xml.
+	 * For the given MetaMorpheus results, find all mods that are present on every instance of
+	 * an amino acid--and return these as static mods.
 	 * 
 	 * @param metaMorphResults
 	 * @return
@@ -76,53 +74,26 @@ public class StaticModProcessor {
 			
 		}
 		
-		/* todo: fix this.
-		// remove the static mods from the mods for all peptides
+		/*
+		 * Unsure why this is breaking things. May be due to changing the underlying
+		 * peptides, which changes the reported peptide string, which changes the
+		 * hashing value. Yes, I'm sure this is it. After I change these peptide
+		 * sequences, I can no longer lookup this object in the map...
 		for( MetaMorphReportedPeptide reportedPeptide : metaMorphResults.keySet() ) {
 			
-			removeStaticModsFromPeptide( reportedPeptide.getPeptide1(), staticMods );
+			
+			
+			ModUtils.removeStaticModsFromPeptide( reportedPeptide.getPeptide1(), staticMods);
 			
 			if( reportedPeptide.getPeptide2() != null )
-				removeStaticModsFromPeptide( reportedPeptide.getPeptide2(), staticMods );
-			
+				ModUtils.removeStaticModsFromPeptide( reportedPeptide.getPeptide2(), staticMods);
 		}
 		*/
 		
 		
 		
+		
 		return staticMods;
-	}
-	
-	
-	private void removeStaticModsFromPeptide( MetaMorphPeptide peptide, Map<String, BigDecimal> staticMods ) {
-				
-		if( peptide.getModifications() == null || peptide.getModifications().keySet().size() < 1 )
-			return;
-		
-		Map<Integer,BigDecimal> modsToRemove = new HashMap<>();
-		
-		for( int position : peptide.getModifications().keySet() ) {
-				
-			String pepModResidue = peptide.getSequence().substring( position - 1, position );
-
-			if( staticMods.containsKey( pepModResidue ) ) {
-					
-				if( peptide.getModifications().get( position ).contains( staticMods.get( pepModResidue ) ) )
-					modsToRemove.put( position, staticMods.get( pepModResidue ) );
-					
-			}
-		}
-
-		for( int position : modsToRemove.keySet() ) {
-			
-			peptide.getModifications().get( position ).remove( modsToRemove.get( position ) );
-			
-			if( peptide.getModifications().get( position ).size() < 1 )
-				peptide.getModifications().remove( position );
-						
-		}
-		
-		
 	}
 	
 	
