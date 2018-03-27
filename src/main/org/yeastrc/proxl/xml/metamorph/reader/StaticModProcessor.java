@@ -29,7 +29,7 @@ public class StaticModProcessor {
 	 * @return
 	 */
 	public Map<String, BigDecimal> processStaticModsFromResults( Map<MetaMorphReportedPeptide, Collection<MetaMorphPSM>> metaMorphResults ) {
-
+		
 		Map<String,BigDecimal> staticMods = new HashMap<>();
 		
 		Map<String, Collection<BigDecimal>> foundMods = new HashMap<>();
@@ -79,53 +79,64 @@ public class StaticModProcessor {
 	
 	private Map<String, Collection<BigDecimal>> getModsToDelete( MetaMorphPeptide peptide, Map<String, Collection<BigDecimal>> foundMods ) {
 		
-		Map<String, Collection<BigDecimal>> modsToDelete = new HashMap<>();
-		
-		for( String residue : foundMods.keySet() ) {
+		try {				
 			
-			String sequence = peptide.getSequence();
-
-			if( !sequence.contains( residue ) )
-				continue;
+			Map<String, Collection<BigDecimal>> modsToDelete = new HashMap<>();
 			
-			int index = sequence.indexOf( residue );
-			while (index >= 0) {
-
-				int position = index + 1;
-
-				// this position of the residue in this peptide has no mods defined.
-				// this means that there are no static mods on this amino acid in this search
-				if( !peptide.getModifications().containsKey( position ) ) {
-					if( !modsToDelete.containsKey( residue ) )
-						modsToDelete.put( residue, new HashSet<>() );
-					
-					modsToDelete.get( residue ).addAll( foundMods.get( residue ) );
-					
-					break;	// don't have to keep looking for more positions of this amino acid
-				}
+			if( peptide.getModifications() == null )
+				return modsToDelete;
+			
+			for( String residue : foundMods.keySet() ) {
 				
-				// look at all mod values found for this amino acid and see if any of them
-				// aren't mod masses for this residue in this peptide.
-				for( BigDecimal modMass : foundMods.get( residue ) ) {
-					
-					if( !peptide.getModifications().get( position ).contains( modMass ) ) {
-						
+				String sequence = peptide.getSequence();
+	
+				if( !sequence.contains( residue ) )
+					continue;
+				
+				int index = sequence.indexOf( residue );
+				while (index >= 0) {
+	
+					int position = index + 1;
+	
+					// this position of the residue in this peptide has no mods defined.
+					// this means that there are no static mods on this amino acid in this search
+					if( !peptide.getModifications().containsKey( position ) ) {
 						if( !modsToDelete.containsKey( residue ) )
 							modsToDelete.put( residue, new HashSet<>() );
 						
-						modsToDelete.get( residue ).add( modMass );
+						modsToDelete.get( residue ).addAll( foundMods.get( residue ) );
+						
+						break;	// don't have to keep looking for more positions of this amino acid
 					}
 					
+					// look at all mod values found for this amino acid and see if any of them
+					// aren't mod masses for this residue in this peptide.
+					for( BigDecimal modMass : foundMods.get( residue ) ) {
+						
+						if( !peptide.getModifications().get( position ).contains( modMass ) ) {
+							
+							if( !modsToDelete.containsKey( residue ) )
+								modsToDelete.put( residue, new HashSet<>() );
+							
+							modsToDelete.get( residue ).add( modMass );
+						}
+						
+					}
+					
+				    index = sequence.indexOf(residue, index + 1);
 				}
 				
-			    index = sequence.indexOf(residue, index + 1);
+				
 			}
 			
 			
+			return modsToDelete;
+		} catch( Throwable t ) {
+			
+			System.err.println( "\n\nError processing peptide: " + peptide );
+			throw t;
+			
 		}
-		
-		
-		return modsToDelete;
 	}
 	
 	

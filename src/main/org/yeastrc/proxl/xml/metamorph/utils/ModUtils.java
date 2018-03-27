@@ -3,7 +3,10 @@ package org.yeastrc.proxl.xml.metamorph.utils;
 import java.math.BigDecimal;
 import java.util.Map;
 
+import org.yeastrc.proxl.xml.metamorph.linkers.MetaMorphLinker;
 import org.yeastrc.proxl.xml.metamorph.objects.MetaMorphPeptide;
+
+import net.systemsbiology.regis_web.pepxml.MsmsPipelineAnalysis.MsmsRunSummary.SpectrumQuery.SearchResult.SearchHit;
 
 public class ModUtils {
 
@@ -39,6 +42,45 @@ public class ModUtils {
 		
 		return false;	// only found static mods
 		
+	}
+
+	/**
+	 * Given the supplied "massDiff", if it corresponds to a known monolink mass
+	 * for the given linker, return that known monolink mass. Otherwise return null.
+	 * 
+	 * @param massDiff
+	 * @param linker
+	 * @return
+	 */
+	public static Double getDeadEndModMass( Double massDiff, MetaMorphLinker linker ) {
+				
+		if( linker.getMonolinkMasses() != null ) {
+			
+			for( Double d : linker.getMonolinkMasses() ) {
+								
+				if( Math.abs( d - massDiff ) < 0.01 ) {
+					return d;
+				}
+			}
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Return true if this search hit is a deadend.
+	 * 
+	 * @param searchHit
+	 * @param linker
+	 * @return
+	 */
+	public static boolean isDeadEndHit( SearchHit searchHit, MetaMorphLinker linker ) {
+				
+		Double reportedMassDiff = Double.valueOf( searchHit.getMassdiff() );
+		if( getDeadEndModMass( reportedMassDiff, linker ) != null )
+			return true;
+		
+		return false;		
 	}
 	
 	

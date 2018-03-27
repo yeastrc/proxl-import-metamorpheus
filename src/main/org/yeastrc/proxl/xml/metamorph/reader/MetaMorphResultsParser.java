@@ -15,6 +15,7 @@ import org.yeastrc.proxl.xml.metamorph.objects.MetaMorphPeptide;
 import org.yeastrc.proxl.xml.metamorph.objects.MetaMorphPeptideBuilder;
 import org.yeastrc.proxl.xml.metamorph.objects.MetaMorphReportedPeptide;
 import org.yeastrc.proxl.xml.metamorph.objects.MetaMorphReportedPeptideBuilder;
+import org.yeastrc.proxl.xml.metamorph.utils.ModUtils;
 import org.yeastrc.proxl.xml.metamorph.utils.PepXMLUtils;
 import org.yeastrc.proxl.xml.metamorph.utils.ScanParsingUtils;
 
@@ -52,35 +53,48 @@ public class MetaMorphResultsParser {
 				for( SearchResult searchResult : spectrumQuery.getSearchResult() ) {
 					for( SearchHit searchHit : searchResult.getSearchHit() ) {
 						
-						// skip looplinks for now.
-						if( PepXMLUtils.getHitType( searchHit ) == SearchConstants.LINK_TYPE_LOOPLINK )
-							continue;
-						
-						// get our result
-						MetaMorphPSM result = getResult( runSummary, spectrumQuery, searchHit );
-						
-						// get our reported peptide
-						MetaMorphReportedPeptide reportedPeptide = getReportedPeptide( searchHit, analysis );
-						
-						// skip this if reportedPeptide is null
-						if( reportedPeptide == null )
-							continue;
-						
-						if( reportedPeptide.getPeptide1().getSequence() == null ) {
-							System.err.println( "\tWARNING: Got null sequence for peptide for: " + spectrumQuery.getSpectrum() + "!! Skipping this scan." );
-							continue;
+						try {
+							
+							// skip looplinks for now.
+							if( PepXMLUtils.getHitType( searchHit ) == SearchConstants.LINK_TYPE_LOOPLINK )
+								continue;
+							
+							// skip deadends for now
+							if( ModUtils.isDeadEndHit( searchHit, analysis.getLinker() ) )
+								continue;							
+							
+							// get our result
+							MetaMorphPSM result = getResult( runSummary, spectrumQuery, searchHit );
+							
+							// get our reported peptide
+							MetaMorphReportedPeptide reportedPeptide = getReportedPeptide( searchHit, analysis );
+							
+							// skip this if reportedPeptide is null
+							if( reportedPeptide == null )
+								continue;
+							
+							if( reportedPeptide.getPeptide1().getSequence() == null ) {
+								System.err.println( "\tWARNING: Got null sequence for peptide for: " + spectrumQuery.getSpectrum() + "!! Skipping this scan." );
+								continue;
+							}
+							
+							if( reportedPeptide.getPeptide2() != null && reportedPeptide.getPeptide2().getSequence() == null ) {
+								System.err.println( "\tWARNING: Got null sequence for peptide for: " + spectrumQuery.getSpectrum() + "!! Skipping this scan." );
+								continue;
+							}
+							
+							
+							if( !results.containsKey( reportedPeptide ) )
+								results.put( reportedPeptide, new ArrayList<MetaMorphPSM>() );
+							
+							results.get( reportedPeptide ).add( result );
+
+						} catch( Throwable t ) {
+							
+							System.err.println( "\n\nError processing spectrum: " + spectrumQuery.getSpectrum() );
+							throw t;
+							
 						}
-						
-						if( reportedPeptide.getPeptide2() != null && reportedPeptide.getPeptide2().getSequence() == null ) {
-							System.err.println( "\tWARNING: Got null sequence for peptide for: " + spectrumQuery.getSpectrum() + "!! Skipping this scan." );
-							continue;
-						}
-						
-						
-						if( !results.containsKey( reportedPeptide ) )
-							results.put( reportedPeptide, new ArrayList<MetaMorphPSM>() );
-						
-						results.get( reportedPeptide ).add( result );
 						
 					}
 				}
