@@ -8,9 +8,15 @@ As of this writing, only DSS and DSSO cross-linkers are supported. Loop-link res
 are not supported because of a bug in the pepXML output for loop-links. Deadends hits
 are also skipped because of:
 
-	"Deadend hits are reported in a less-than-optimal way. The mass of the cross-linker is reported as the "massDiff" of the hit (which is usually an indicator of error of the precursor match), and the position of the linker is reported as the "score" for the hit--instead of the actual score for the hit, which isn't reported for deadends."
+	"Deadend hits are reported in a less-than-optimal way. The mass of the cross-linker
+	is reported as the "massDiff" of the hit (which is usually an indicator of error of
+	the precursor match), and the position of the linker is reported as the "score" for
+	the hit--instead of the actual score for the hit, which isn't reported for
+	deadends."
 
-	"There is no way to know what the "score" was for deadend hits. Since proxl requires that this score be available for all hits, and it's not available for deadends, I've opted to skip deadends for now."
+	"There is no way to know what the "score" was for deadend hits. Since proxl requires
+	that this score be available for all hits, and it's not available for deadends, I've
+	opted to skip deadends for now."
 
 
 How To Run
