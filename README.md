@@ -4,13 +4,8 @@ MetaMorpheus to Proxl XML Converter
 Use this program to convert the results of a MetaMorpheus cross-linking analysis to
 proxl XML suitable for import into the proxl web application.
 
-This is a **very** basic MetaMorpheus converter, I am currently working with the
-MetaMorpheus authors to make the converter more robust. As of this writing, only
-DSS and DSSO are supported, and only the default fixed (Carbamidomethyl of C. and
-Carbamidomethyl of U.) and variable (Oxidation of M.) modifications are supported.
-
-After working with MetaMorpheus authors, I expect all cross-linkers and modification
-types to be supported with minimal user input.
+As of this writing, only DSS and DSSO cross-linkers are supported. Loop-link results
+are not supported because of a bug in the pepXML output for loop-links.
 
 How To Run
 -------------
