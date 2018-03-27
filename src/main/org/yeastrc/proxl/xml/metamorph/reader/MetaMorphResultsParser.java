@@ -10,8 +10,11 @@ import java.util.Map;
 import org.yeastrc.proxl.xml.metamorph.constants.SearchConstants;
 import org.yeastrc.proxl.xml.metamorph.objects.AnalysisParameters;
 import org.yeastrc.proxl.xml.metamorph.objects.MetaMorphPSM;
+import org.yeastrc.proxl.xml.metamorph.objects.MetaMorphPSMBuilder;
 import org.yeastrc.proxl.xml.metamorph.objects.MetaMorphPeptide;
+import org.yeastrc.proxl.xml.metamorph.objects.MetaMorphPeptideBuilder;
 import org.yeastrc.proxl.xml.metamorph.objects.MetaMorphReportedPeptide;
+import org.yeastrc.proxl.xml.metamorph.objects.MetaMorphReportedPeptideBuilder;
 import org.yeastrc.proxl.xml.metamorph.utils.PepXMLUtils;
 import org.yeastrc.proxl.xml.metamorph.utils.ScanParsingUtils;
 
@@ -120,15 +123,15 @@ public class MetaMorphResultsParser {
 		//System.out.println( searchHit.getPeptide() );
 		//System.out.println( "\t" + searchHit.getXlinkType() );
 		
-		MetaMorphReportedPeptide reportedPeptide = new MetaMorphReportedPeptide();
-		reportedPeptide.setType( SearchConstants.LINK_TYPE_CROSSLINK );
+		MetaMorphReportedPeptideBuilder reportedPeptideBuilder = new MetaMorphReportedPeptideBuilder();
+		reportedPeptideBuilder.setType( SearchConstants.LINK_TYPE_CROSSLINK );
 				
 		for( LinkedPeptide linkedPeptide : searchHit.getXlink().getLinkedPeptide() ) {
 			
 			int peptideNumber = 0;
-			if( reportedPeptide.getPeptide1() == null ) {
+			if( reportedPeptideBuilder.getPeptide1() == null ) {
 				peptideNumber = 1;
-			} else if( reportedPeptide.getPeptide2() == null ) {
+			} else if( reportedPeptideBuilder.getPeptide2() == null ) {
 				peptideNumber = 2;
 			} else {
 				throw new Exception( "Got more than two linked peptides." );
@@ -159,11 +162,11 @@ public class MetaMorphResultsParser {
 			
 			
 			if( peptideNumber == 1 ) {
-				reportedPeptide.setPeptide1( peptide );
-				reportedPeptide.setPosition1( position );
+				reportedPeptideBuilder.setPeptide1( peptide );
+				reportedPeptideBuilder.setPosition1( position );
 			} else {
-				reportedPeptide.setPeptide2( peptide );
-				reportedPeptide.setPosition2( position );
+				reportedPeptideBuilder.setPeptide2( peptide );
+				reportedPeptideBuilder.setPosition2( position );
 			}
 			
 			
@@ -173,30 +176,30 @@ public class MetaMorphResultsParser {
 		// ensure peptides and positions are consistently ordered so that any two reported peptides containing the same
 		// two peptides and linked positions are recognized as the same
 		
-		if( reportedPeptide.getPeptide1().toString().compareTo( reportedPeptide.getPeptide2().toString() ) > 0 ) {
+		if( reportedPeptideBuilder.getPeptide1().toString().compareTo( reportedPeptideBuilder.getPeptide2().toString() ) > 0 ) {
 
 			// swap them
-			MetaMorphPeptide tpep = reportedPeptide.getPeptide1();
-			int tpos = reportedPeptide.getPosition1();
+			MetaMorphPeptide tpep = reportedPeptideBuilder.getPeptide1();
+			int tpos = reportedPeptideBuilder.getPosition1();
 			
-			reportedPeptide.setPeptide1( reportedPeptide.getPeptide2() );
-			reportedPeptide.setPosition1( reportedPeptide.getPosition2() );
+			reportedPeptideBuilder.setPeptide1( reportedPeptideBuilder.getPeptide2() );
+			reportedPeptideBuilder.setPosition1( reportedPeptideBuilder.getPosition2() );
 			
-			reportedPeptide.setPeptide2( tpep );
-			reportedPeptide.setPosition2( tpos );
-		} else if( reportedPeptide.getPeptide1().toString().compareTo( reportedPeptide.getPeptide2().toString() ) == 0 ) {
+			reportedPeptideBuilder.setPeptide2( tpep );
+			reportedPeptideBuilder.setPosition2( tpos );
+		} else if( reportedPeptideBuilder.getPeptide1().toString().compareTo( reportedPeptideBuilder.getPeptide2().toString() ) == 0 ) {
 			
 			// peptides are the same, should we swap positions?
-			if( reportedPeptide.getPosition1() > reportedPeptide.getPosition2() ) {
-				int tpos = reportedPeptide.getPosition1();
+			if( reportedPeptideBuilder.getPosition1() > reportedPeptideBuilder.getPosition2() ) {
+				int tpos = reportedPeptideBuilder.getPosition1();
 				
-				reportedPeptide.setPosition1( reportedPeptide.getPosition2() );
-				reportedPeptide.setPosition2( tpos );
+				reportedPeptideBuilder.setPosition1( reportedPeptideBuilder.getPosition2() );
+				reportedPeptideBuilder.setPosition2( tpos );
 			}
 			
 		}
 		
-		return reportedPeptide;
+		return new MetaMorphReportedPeptide( reportedPeptideBuilder );
 	}
 	
 	/**
@@ -207,10 +210,10 @@ public class MetaMorphResultsParser {
 	 */
 	private MetaMorphReportedPeptide getLooplinkReportedPeptide( SearchHit searchHit, AnalysisParameters analysis ) throws Exception {
 		
-		MetaMorphReportedPeptide reportedPeptide = new MetaMorphReportedPeptide();
+		MetaMorphReportedPeptideBuilder reportedPeptideBuilder = new MetaMorphReportedPeptideBuilder();
 		
-		reportedPeptide.setPeptide1( getPeptideFromSearchHit( searchHit, analysis ) );
-		reportedPeptide.setType( SearchConstants.LINK_TYPE_LOOPLINK );
+		reportedPeptideBuilder.setPeptide1( getPeptideFromSearchHit( searchHit, analysis ) );
+		reportedPeptideBuilder.setType( SearchConstants.LINK_TYPE_LOOPLINK );
 		
 		// add in the linked positions
 		Xlink xl = searchHit.getXlink();
@@ -220,27 +223,27 @@ public class MetaMorphResultsParser {
 				
 				//System.out.println( "\t\t" + nvt.getValueAttribute() );
 				
-				if( reportedPeptide.getPosition1() == 0 )
-					reportedPeptide.setPosition1( Integer.valueOf( nvt.getValueAttribute() ) );
-				else if( reportedPeptide.getPosition2() == 0 )
-					reportedPeptide.setPosition2( Integer.valueOf( nvt.getValueAttribute() ) );
+				if( reportedPeptideBuilder.getPosition1() == 0 )
+					reportedPeptideBuilder.setPosition1( Integer.valueOf( nvt.getValueAttribute() ) );
+				else if( reportedPeptideBuilder.getPosition2() == 0 )
+					reportedPeptideBuilder.setPosition2( Integer.valueOf( nvt.getValueAttribute() ) );
 				else
 					throw new Exception( "Got more than 2 linked positions for looplink." );
 			}
 		}
 		
-		if( reportedPeptide.getPosition1() == 0 || reportedPeptide.getPosition2() == 0 )
+		if( reportedPeptideBuilder.getPosition1() == 0 || reportedPeptideBuilder.getPosition2() == 0 )
 			throw new Exception( "Did not get two positions for looplink." );
 		
-		if( reportedPeptide.getPosition1() > reportedPeptide.getPosition2() ) {
-			int tpos = reportedPeptide.getPosition1();
+		if( reportedPeptideBuilder.getPosition1() > reportedPeptideBuilder.getPosition2() ) {
+			int tpos = reportedPeptideBuilder.getPosition1();
 			
-			reportedPeptide.setPosition1( reportedPeptide.getPosition2() );
-			reportedPeptide.setPosition2( tpos );
+			reportedPeptideBuilder.setPosition1( reportedPeptideBuilder.getPosition2() );
+			reportedPeptideBuilder.setPosition2( tpos );
 		}
 		
 		
-		return reportedPeptide;
+		return new MetaMorphReportedPeptide( reportedPeptideBuilder );
 	}
 
 	/**
@@ -251,12 +254,12 @@ public class MetaMorphResultsParser {
 	 */
 	private MetaMorphReportedPeptide getUnlinkedReportedPeptide( SearchHit searchHit, AnalysisParameters analysis ) throws Exception {
 		
-		MetaMorphReportedPeptide reportedPeptide = new MetaMorphReportedPeptide();
+		MetaMorphReportedPeptideBuilder reportedPeptideBuilder = new MetaMorphReportedPeptideBuilder();
 		
-		reportedPeptide.setPeptide1( getPeptideFromSearchHit( searchHit, analysis ) );
-		reportedPeptide.setType( SearchConstants.LINK_TYPE_UNLINKED );
+		reportedPeptideBuilder.setPeptide1( getPeptideFromSearchHit( searchHit, analysis ) );
+		reportedPeptideBuilder.setType( SearchConstants.LINK_TYPE_UNLINKED );
 		
-		return reportedPeptide;
+		return new MetaMorphReportedPeptide( reportedPeptideBuilder );
 	}
 	
 	/**
@@ -268,9 +271,9 @@ public class MetaMorphResultsParser {
 	 */
 	private MetaMorphPeptide getPeptideFromSearchHit( SearchHit searchHit, AnalysisParameters analysis ) throws Exception {
 		
-		MetaMorphPeptide peptide = new MetaMorphPeptide();
+		MetaMorphPeptideBuilder peptideBuilder = new MetaMorphPeptideBuilder();
 		
-		peptide.setSequence( searchHit.getPeptide() );
+		peptideBuilder.setSequence( searchHit.getPeptide() );
 				
 		ModInfoDataType modInfo = searchHit.getModificationInfo();
 		
@@ -288,10 +291,10 @@ public class MetaMorphResultsParser {
 				mods.get( position ).add( BigDecimal.valueOf( massDifferenceDouble ) );				
 			}
 			
-			peptide.setModifications( mods );			
+			peptideBuilder.setModifications( mods );			
 		}
 				
-		return peptide;
+		return new MetaMorphPeptide( peptideBuilder );
 	}
 	
 	/**
@@ -303,9 +306,9 @@ public class MetaMorphResultsParser {
 	 */
 	private MetaMorphPeptide getPeptideFromLinkedPeptide( LinkedPeptide linkedPeptide, AnalysisParameters analysis ) throws Exception {
 		
-		MetaMorphPeptide peptide = new MetaMorphPeptide();
+		MetaMorphPeptideBuilder peptideBuilder = new MetaMorphPeptideBuilder();
 		
-		peptide.setSequence( linkedPeptide.getPeptide() );		
+		peptideBuilder.setSequence( linkedPeptide.getPeptide() );		
 		
 		ModInfoDataType modInfo = linkedPeptide.getModificationInfo();
 		
@@ -323,10 +326,10 @@ public class MetaMorphResultsParser {
 				mods.get( position ).add( BigDecimal.valueOf( massDifferenceDouble ) );				
 			}
 			
-			peptide.setModifications( mods );			
+			peptideBuilder.setModifications( mods );			
 		}
 				
-		return peptide;
+		return new MetaMorphPeptide( peptideBuilder );
 	}
 	
 	
@@ -340,42 +343,42 @@ public class MetaMorphResultsParser {
 	 */
 	private MetaMorphPSM getResult( MsmsRunSummary runSummary, SpectrumQuery spectrumQuery, SearchHit searchHit ) throws Exception {
 		
-		MetaMorphPSM result = new MetaMorphPSM();
+		MetaMorphPSMBuilder psmBuilder = new MetaMorphPSMBuilder();
 		
-		result.setScanFile( ScanParsingUtils.getFilenameFromReportedScan( spectrumQuery.getSpectrum() ) + runSummary.getRawData() );
+		psmBuilder.setScanFile( ScanParsingUtils.getFilenameFromReportedScan( spectrumQuery.getSpectrum() ) + runSummary.getRawData() );
 		
 		
 		
-		result.setScanNumber( (int)spectrumQuery.getStartScan() );
-		result.setCharge( spectrumQuery.getAssumedCharge().intValue() );
+		psmBuilder.setScanNumber( (int)spectrumQuery.getStartScan() );
+		psmBuilder.setCharge( spectrumQuery.getAssumedCharge().intValue() );
 		
 		// if this is a crosslink or looplink, get the mass of the linker
 		int type = PepXMLUtils.getHitType( searchHit );
 		if( type == SearchConstants.LINK_TYPE_CROSSLINK || type == SearchConstants.LINK_TYPE_LOOPLINK ) {
 			Xlink xl = searchHit.getXlink();
-			result.setLinkerMass( xl.getMass() );
+			psmBuilder.setLinkerMass( xl.getMass() );
 		}
 		
 		for( NameValueType score : searchHit.getSearchScore() ) {
 			if( score.getName().equals( "xlTotalScore" ) ) {
-				result.setTotalScore( new BigDecimal( score.getValueAttribute() ) );
+				psmBuilder.setTotalScore( new BigDecimal( score.getValueAttribute() ) );
 			}
 			
 			else if( score.getName().equals( "Qvalue" ) ) {
-				result.setqValue( new BigDecimal( score.getValueAttribute() ) );
+				psmBuilder.setqValue( new BigDecimal( score.getValueAttribute() ) );
 			}
 					
 		}
 		
 		
-		if( result.getqValue() == null )
+		if( psmBuilder.getqValue() == null )
 			throw new Exception( "Missing qvalue score for result: " + spectrumQuery.getSpectrum() );
 		
-		if( result.getTotalScore() == null )
+		if( psmBuilder.getTotalScore() == null )
 			throw new Exception( "Missing TotalScore error for result: " + spectrumQuery.getSpectrum() );
 		
 		
-		return result;
+		return new MetaMorphPSM( psmBuilder );
 		
 	}
 	

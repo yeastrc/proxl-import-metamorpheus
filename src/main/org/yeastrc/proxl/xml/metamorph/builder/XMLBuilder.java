@@ -14,9 +14,11 @@ import org.yeastrc.proxl.xml.metamorph.annotations.PSMDefaultVisibleAnnotationTy
 import org.yeastrc.proxl.xml.metamorph.constants.SearchConstants;
 import org.yeastrc.proxl.xml.metamorph.objects.AnalysisParameters;
 import org.yeastrc.proxl.xml.metamorph.objects.MetaMorphPSM;
+import org.yeastrc.proxl.xml.metamorph.objects.MetaMorphPeptide;
 import org.yeastrc.proxl.xml.metamorph.objects.MetaMorphReportedPeptide;
 import org.yeastrc.proxl.xml.metamorph.reader.MetaMorphResultsParser;
 import org.yeastrc.proxl.xml.metamorph.reader.StaticModProcessor;
+import org.yeastrc.proxl.xml.metamorph.utils.ModUtils;
 import org.yeastrc.proxl.xml.metamorph.utils.PepXMLUtils;
 import org.yeastrc.proxl_import.api.xml_dto.AnnotationSortOrder;
 import org.yeastrc.proxl_import.api.xml_dto.ConfigurationFile;
@@ -209,13 +211,16 @@ public class XMLBuilder {
 			
 			// add in the 1st parsed peptide
 			{
+				
+				MetaMorphPeptide metaMorphPeptide = rp.getPeptide1();
+				
 				Peptide xmlPeptide = new Peptide();
 				xmlPeptides.getPeptide().add( xmlPeptide );
 				
-				xmlPeptide.setSequence( rp.getPeptide1().getSequence() );
+				xmlPeptide.setSequence( metaMorphPeptide.getSequence() );
 				
 				// add in the mods for this peptide
-				if( rp.getPeptide1().getModifications() != null && rp.getPeptide1().getModifications().keySet().size() > 0 ) {
+				if( ModUtils.peptideHasNonStaticMods( metaMorphPeptide, staticMods) ) {
 					
 					Modifications xmlModifications = new Modifications();
 					xmlPeptide.setModifications( xmlModifications );
@@ -223,13 +228,16 @@ public class XMLBuilder {
 					for( int position : rp.getPeptide1().getModifications().keySet() ) {
 						for( BigDecimal modMass : rp.getPeptide1().getModifications().get( position ) ) {
 	
-							Modification xmlModification = new Modification();
-							xmlModifications.getModification().add( xmlModification );
-							
-							xmlModification.setMass( modMass );
-							xmlModification.setPosition( new BigInteger( String.valueOf( position ) ) );
-							//xmlModification.setIsMonolink( ModUtils.isMonolink( modMass, analysis.getConfReader() ) );
-							
+							if( !ModUtils.isStaticMod( ModUtils.getResidueAtPosition( metaMorphPeptide, position), modMass, staticMods ) ) {
+								
+								Modification xmlModification = new Modification();
+								xmlModifications.getModification().add( xmlModification );
+								
+								xmlModification.setMass( modMass );
+								xmlModification.setPosition( new BigInteger( String.valueOf( position ) ) );
+								//xmlModification.setIsMonolink( ModUtils.isMonolink( modMass, analysis.getConfReader() ) );
+
+							}
 						}
 					}
 				}
@@ -259,27 +267,32 @@ public class XMLBuilder {
 			// add in the 2nd parsed peptide, if it exists
 			if( rp.getPeptide2() != null ) {
 				
+				MetaMorphPeptide metaMorphPeptide = rp.getPeptide2();
+				
 				Peptide xmlPeptide = new Peptide();
 				xmlPeptides.getPeptide().add( xmlPeptide );
 				
-				xmlPeptide.setSequence( rp.getPeptide2().getSequence() );
+				xmlPeptide.setSequence( metaMorphPeptide.getSequence() );
 				
 				// add in the mods for this peptide
-				if( rp.getPeptide2().getModifications() != null && rp.getPeptide2().getModifications().keySet().size() > 0 ) {
+				if( ModUtils.peptideHasNonStaticMods( metaMorphPeptide, staticMods) ) {
 					
 					Modifications xmlModifications = new Modifications();
 					xmlPeptide.setModifications( xmlModifications );
 					
-					for( int position : rp.getPeptide2().getModifications().keySet() ) {
-						for( BigDecimal modMass : rp.getPeptide2().getModifications().get( position ) ) {
+					for( int position : metaMorphPeptide.getModifications().keySet() ) {
+						for( BigDecimal modMass : metaMorphPeptide.getModifications().get( position ) ) {
 							
-							Modification xmlModification = new Modification();
-							xmlModifications.getModification().add( xmlModification );
-							
-							xmlModification.setMass( modMass );
-							xmlModification.setPosition( new BigInteger( String.valueOf( position ) ) );
-							//xmlModification.setIsMonolink( ModUtils.isMonolink( modMass, analysis.getConfReader() ) );
-							
+							if( !ModUtils.isStaticMod( ModUtils.getResidueAtPosition( metaMorphPeptide, position), modMass, staticMods ) ) {
+
+								Modification xmlModification = new Modification();
+								xmlModifications.getModification().add( xmlModification );
+								
+								xmlModification.setMass( modMass );
+								xmlModification.setPosition( new BigInteger( String.valueOf( position ) ) );
+								//xmlModification.setIsMonolink( ModUtils.isMonolink( modMass, analysis.getConfReader() ) );
+								
+							}
 						}
 					}
 				}

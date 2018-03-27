@@ -6,12 +6,27 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
+
 public class MetaMorphPeptide {
 
+	public MetaMorphPeptide( MetaMorphPeptideBuilder builder ) {
+		
+		this.sequence = builder.getSequence();
+		
+		if( builder.getModifications() != null ) {
+			Builder<Integer, Collection<BigDecimal>> mapBuilder = ImmutableMap.builder();
+			this.modifications = mapBuilder.putAll( builder.getModifications() ).build();
+		} else {
+			this.modifications = null;
+		}
+		
+	}
+	
 	/**
 	 * Get the string representation of this peptide that includes mods, in the form of:
 	 * PEP[12.29,15.99]TI[12.2932]DE
@@ -55,19 +70,13 @@ public class MetaMorphPeptide {
 	public String getSequence() {
 		return sequence;
 	}
-	public void setSequence(String sequence) {
-		this.sequence = sequence;
-	}
-	public Map<Integer, Collection<BigDecimal>> getModifications() {
+
+	public ImmutableMap<Integer, Collection<BigDecimal>> getModifications() {
 		return modifications;
 	}
-	public void setModifications(Map<Integer, Collection<BigDecimal>> modifications) {
-		this.modifications = modifications;
-	}
 
 
-
-	private String sequence;
-	private Map<Integer, Collection<BigDecimal>> modifications;
+	private final String sequence;
+	private final ImmutableMap<Integer, Collection<BigDecimal>> modifications;
 	
 }
