@@ -190,7 +190,7 @@ public class XMLBuilder {
 				
 				StaticModification xmlSmod = new StaticModification();
 				xmlSmod.setAminoAcid( moddedResidue );
-				xmlSmod.setMassChange( analysis.getConfReader().getStaticModifications().get( moddedResidue ) );
+				xmlSmod.setMassChange( staticMods.get( moddedResidue ) );
 				
 				smods.getStaticModification().add( xmlSmod );
 		}
