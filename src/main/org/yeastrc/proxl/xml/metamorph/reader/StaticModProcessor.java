@@ -10,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.yeastrc.proxl.xml.metamorph.objects.MetaMorphPSM;
 import org.yeastrc.proxl.xml.metamorph.objects.MetaMorphPeptide;
 import org.yeastrc.proxl.xml.metamorph.objects.MetaMorphReportedPeptide;
-import org.yeastrc.proxl.xml.metamorph.utils.ModUtils;
 
 /**
  * Use experimental results to infer static mods
@@ -73,25 +72,6 @@ public class StaticModProcessor {
 				staticMods.put( residue, mod );
 			
 		}
-		
-		/*
-		 * Unsure why this is breaking things. May be due to changing the underlying
-		 * peptides, which changes the reported peptide string, which changes the
-		 * hashing value. Yes, I'm sure this is it. After I change these peptide
-		 * sequences, I can no longer lookup this object in the map...
-		for( MetaMorphReportedPeptide reportedPeptide : metaMorphResults.keySet() ) {
-			
-			
-			
-			ModUtils.removeStaticModsFromPeptide( reportedPeptide.getPeptide1(), staticMods);
-			
-			if( reportedPeptide.getPeptide2() != null )
-				ModUtils.removeStaticModsFromPeptide( reportedPeptide.getPeptide2(), staticMods);
-		}
-		*/
-		
-		
-		
 		
 		return staticMods;
 	}
