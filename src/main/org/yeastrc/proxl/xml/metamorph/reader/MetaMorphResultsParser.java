@@ -12,7 +12,6 @@ import org.yeastrc.proxl.xml.metamorph.objects.AnalysisParameters;
 import org.yeastrc.proxl.xml.metamorph.objects.MetaMorphPSM;
 import org.yeastrc.proxl.xml.metamorph.objects.MetaMorphPeptide;
 import org.yeastrc.proxl.xml.metamorph.objects.MetaMorphReportedPeptide;
-import org.yeastrc.proxl.xml.metamorph.utils.ModUtils;
 import org.yeastrc.proxl.xml.metamorph.utils.PepXMLUtils;
 import org.yeastrc.proxl.xml.metamorph.utils.ScanParsingUtils;
 
@@ -190,10 +189,6 @@ public class MetaMorphResultsParser {
 	 */
 	private MetaMorphReportedPeptide getLooplinkReportedPeptide( SearchHit searchHit, AnalysisParameters analysis ) throws Exception {
 		
-		//System.out.println( searchHit.getPeptide() );
-		//System.out.println( "\t" + searchHit.getXlinkType() );
-
-		
 		MetaMorphReportedPeptide reportedPeptide = new MetaMorphReportedPeptide();
 		
 		reportedPeptide.setPeptide1( getPeptideFromSearchHit( searchHit, analysis ) );
@@ -266,14 +261,8 @@ public class MetaMorphResultsParser {
 			
 			for( ModAminoacidMass mam : modInfo.getModAminoacidMass() ) {
 				
-				int position = mam.getPosition().intValue() - 1;
-				String residue = peptide.getSequence().substring( position - 1, position );
-				
+				int position = mam.getPosition().intValue() - 1;				
 				double massDifferenceDouble = mam.getMass();
-
-				// don't add static mods as mods
-				if( ModUtils.isStaticMod(residue, BigDecimal.valueOf( massDifferenceDouble ), analysis.getConfReader() ) )
-					continue;
 				
 				if( !mods.containsKey( position ) )
 					mods.put( position, new HashSet<BigDecimal>() );
@@ -307,14 +296,8 @@ public class MetaMorphResultsParser {
 			
 			for( ModAminoacidMass mam : modInfo.getModAminoacidMass() ) {
 				
-				int position = mam.getPosition().intValue() - 1;
-				String residue = peptide.getSequence().substring( position - 1, position );
-				
+				int position = mam.getPosition().intValue() - 1;				
 				double massDifferenceDouble = mam.getMass();
-
-				// don't add static mods as mods
-				if( ModUtils.isStaticMod(residue, BigDecimal.valueOf( massDifferenceDouble ), analysis.getConfReader() ) )
-					continue;
 				
 				if( !mods.containsKey( position ) )
 					mods.put( position, new HashSet<BigDecimal>() );
