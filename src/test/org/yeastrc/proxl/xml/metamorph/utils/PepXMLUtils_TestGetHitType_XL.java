@@ -15,7 +15,7 @@ import org.yeastrc.proxl.xml.metamorph.constants.SearchConstants;
 
 import net.systemsbiology.regis_web.pepxml.MsmsPipelineAnalysis.MsmsRunSummary.SpectrumQuery.SearchResult.SearchHit;
 
-public class PepXMLUtils_TestGetHitType {
+public class PepXMLUtils_TestGetHitType_XL {
 
 	private SearchHit _XML_SEARCH_HIT = null;
 	
