@@ -69,13 +69,11 @@ Usage:
   More information: https://github.com/yeastrc/proxl-import-metamorpheus
 
  Currently-supported linkers:
- 	* dss
-	* bs3
-	* edc
-	* bs2
-	* sulfo-smcc
-	* dsso
-	* bs3.sty (supports links from K/nterm-K/S/T/Y/nterm)
-	* dss.sty (supports links from K/nterm-K/S/T/Y/nterm)
-
-  
+ * dss
+ * bs3
+ * edc
+ * bs2
+ * sulfo-smcc
+ * dsso
+ * bs3.sty (supports links from K/nterm-K/S/T/Y/nterm)
+ * dss.sty (supports links from K/nterm-K/S/T/Y/nterm)
