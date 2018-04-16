@@ -63,37 +63,6 @@ public class ModUtils {
 		
 	}
 	
-	/**
-	 * Return true if this search hit is a deadend.
-	 * 
-	 * @param searchHit
-	 * @param linker
-	 * @return
-	 */
-	public static boolean isDeadEndHit( SearchHit searchHit, MetaMorphLinker linker ) {
-		
-		// deadends are always unlinked (not cross-link or loop-link)
-		if( !searchHit.getXlinkType().equals( "na" ) )
-			return false;
-
-		if( searchHit.getModificationInfo() == null )
-			return false;
-		
-		if( searchHit.getModificationInfo().getModAminoacidMass().size() < 1 )
-			return false;
-		
-		for( ModInfoDataType.ModAminoacidMass maam : searchHit.getModificationInfo().getModAminoacidMass() ) {
-			
-			Double modMass = maam.getMass();
-			if( isDeadEndMod( modMass, linker ) )
-				return true;
-			
-		}
-		
-		// if we get here, no mod mass matched any known monolink mass for this linker
-		return false;
-		
-	}
 	
 	public static boolean isDeadEndMod( Double modMass, MetaMorphLinker linker ) {
 		
