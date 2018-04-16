@@ -24,6 +24,7 @@ import java.util.Map;
 import org.yeastrc.proxl.xml.metamorph.linkers.MetaMorphLinker;
 import org.yeastrc.proxl.xml.metamorph.objects.MetaMorphPeptide;
 
+import net.systemsbiology.regis_web.pepxml.ModInfoDataType;
 import net.systemsbiology.regis_web.pepxml.MsmsPipelineAnalysis.MsmsRunSummary.SpectrumQuery.SearchResult.SearchHit;
 
 public class ModUtils {
@@ -61,29 +62,6 @@ public class ModUtils {
 		return false;	// only found static mods
 		
 	}
-
-	/**
-	 * Given the supplied "massDiff", if it corresponds to a known monolink mass
-	 * for the given linker, return that known monolink mass. Otherwise return null.
-	 * 
-	 * @param massDiff
-	 * @param linker
-	 * @return
-	 */
-	public static Double getDeadEndModMass( Double massDiff, MetaMorphLinker linker ) {
-				
-		if( linker.getMonolinkMasses() != null ) {
-			
-			for( Double d : linker.getMonolinkMasses() ) {
-								
-				if( Math.abs( d - massDiff ) < 0.01 ) {
-					return d;
-				}
-			}
-		}
-		
-		return null;
-	}
 	
 	/**
 	 * Return true if this search hit is a deadend.
@@ -93,12 +71,46 @@ public class ModUtils {
 	 * @return
 	 */
 	public static boolean isDeadEndHit( SearchHit searchHit, MetaMorphLinker linker ) {
-				
-		Double reportedMassDiff = Double.valueOf( searchHit.getMassdiff() );
-		if( getDeadEndModMass( reportedMassDiff, linker ) != null )
-			return true;
 		
-		return false;		
+		// deadends are always unlinked (not cross-link or loop-link)
+		if( !searchHit.getXlinkType().equals( "na" ) )
+			return false;
+
+		if( searchHit.getModificationInfo() == null )
+			return false;
+		
+		if( searchHit.getModificationInfo().getModAminoacidMass().size() < 1 )
+			return false;
+		
+		for( ModInfoDataType.ModAminoacidMass maam : searchHit.getModificationInfo().getModAminoacidMass() ) {
+			
+			Double modMass = maam.getMass();
+			if( isDeadEndMod( modMass, linker ) )
+				return true;
+			
+		}
+		
+		// if we get here, no mod mass matched any known monolink mass for this linker
+		return false;
+		
+	}
+	
+	public static boolean isDeadEndMod( Double modMass, MetaMorphLinker linker ) {
+		
+		// linker has no monolink masses defined, not a deadend
+		if( linker.getMonolinkMasses() == null || linker.getMonolinkMasses().size() < 1 )
+			return false;
+		
+		// test the mass of this mod against the known deadend masses. if it is a deadend, this is a deadend hit
+		for( double linkerMonolinkMass : linker.getMonolinkMasses() ) {
+			
+			// if they are within 0.01 of each other, consider them the same
+			if( Math.abs( linkerMonolinkMass - modMass ) < 0.01 )
+				return true;
+			
+		}
+		
+		return false;
 	}
 	
 	

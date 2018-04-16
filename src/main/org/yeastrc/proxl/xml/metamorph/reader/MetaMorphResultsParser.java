@@ -72,15 +72,7 @@ public class MetaMorphResultsParser {
 					for( SearchHit searchHit : searchResult.getSearchHit() ) {
 						
 						try {
-							
-							// skip looplinks for now.
-							if( PepXMLUtils.getHitType( searchHit ) == SearchConstants.LINK_TYPE_LOOPLINK )
-								continue;
-							
-							// skip deadends for now
-							if( ModUtils.isDeadEndHit( searchHit, analysis.getLinker() ) )
-								continue;							
-							
+
 							// get our result
 							MetaMorphPSM result = getResult( runSummary, spectrumQuery, searchHit );
 							

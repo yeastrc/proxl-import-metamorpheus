@@ -253,7 +253,7 @@ public class XMLBuilder {
 								
 								xmlModification.setMass( modMass );
 								xmlModification.setPosition( new BigInteger( String.valueOf( position ) ) );
-								//xmlModification.setIsMonolink( ModUtils.isMonolink( modMass, analysis.getConfReader() ) );
+								xmlModification.setIsMonolink( ModUtils.isDeadEndMod( modMass.doubleValue(), analysis.getLinker() ) );
 
 							}
 						}
@@ -308,7 +308,7 @@ public class XMLBuilder {
 								
 								xmlModification.setMass( modMass );
 								xmlModification.setPosition( new BigInteger( String.valueOf( position ) ) );
-								//xmlModification.setIsMonolink( ModUtils.isMonolink( modMass, analysis.getConfReader() ) );
+								xmlModification.setIsMonolink( ModUtils.isDeadEndMod( modMass.doubleValue(), analysis.getLinker() ) );
 								
 							}
 						}
