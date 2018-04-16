@@ -242,7 +242,10 @@ public class MetaMorphResultsParser {
 		// add in the linked positions
 		Xlink xl = searchHit.getXlink();
 		
-		for( NameValueType nvt : xl.getXlinkScore() ) {
+		// MetaMorpheus reports loop-linked positions in a <linked_peptide/> element.
+		LinkedPeptide lp = xl.getLinkedPeptide().get( 0 );
+		
+		for( NameValueType nvt : lp.getXlinkScore() ) {
 			if( nvt.getName().equals( "link" ) ) {
 				
 				//System.out.println( "\t\t" + nvt.getValueAttribute() );

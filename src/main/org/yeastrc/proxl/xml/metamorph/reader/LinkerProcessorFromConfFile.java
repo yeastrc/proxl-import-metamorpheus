@@ -153,7 +153,7 @@ public class LinkerProcessorFromConfFile {
 				
 				
 				if( fields[ 0 ].equals( "CrosslinkerType" ) )
-					return fields[ 0 ].replaceAll( "\"", "" );
+					return fields[ 1 ].replaceAll( "\"", "" );
 
 				
 				line = br.readLine();
