@@ -4,6 +4,8 @@ MetaMorpheus to Proxl XML Converter
 Use this program to convert the results of a MetaMorpheus cross-linking analysis to
 proxl XML suitable for import into the proxl web application.
 
+**Note:** When running MetaMorpheus, you must enable output as PepXML when defining your XL Search taslk.
+
 How To Run
 -------------
 1. Download the [latest release](https://github.com/yeastrc/proxl-import-metamorpheus/releases).
