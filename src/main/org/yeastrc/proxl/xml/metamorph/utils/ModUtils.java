@@ -24,9 +24,6 @@ import java.util.Map;
 import org.yeastrc.proxl.xml.metamorph.linkers.MetaMorphLinker;
 import org.yeastrc.proxl.xml.metamorph.objects.MetaMorphPeptide;
 
-import net.systemsbiology.regis_web.pepxml.ModInfoDataType;
-import net.systemsbiology.regis_web.pepxml.MsmsPipelineAnalysis.MsmsRunSummary.SpectrumQuery.SearchResult.SearchHit;
-
 public class ModUtils {
 
 	public static boolean isStaticMod( String residue, BigDecimal modMass, Map<String,BigDecimal> staticMods ) {

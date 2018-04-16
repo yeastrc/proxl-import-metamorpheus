@@ -33,7 +33,6 @@ import org.yeastrc.proxl.xml.metamorph.objects.MetaMorphPeptide;
 import org.yeastrc.proxl.xml.metamorph.objects.MetaMorphPeptideBuilder;
 import org.yeastrc.proxl.xml.metamorph.objects.MetaMorphReportedPeptide;
 import org.yeastrc.proxl.xml.metamorph.objects.MetaMorphReportedPeptideBuilder;
-import org.yeastrc.proxl.xml.metamorph.utils.ModUtils;
 import org.yeastrc.proxl.xml.metamorph.utils.PepXMLUtils;
 import org.yeastrc.proxl.xml.metamorph.utils.ScanParsingUtils;
 
