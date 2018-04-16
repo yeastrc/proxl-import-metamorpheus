@@ -187,7 +187,7 @@ public class StaticModProcessor {
 	 * @param foundMods
 	 */
 	private void addModsToFoundMods( MetaMorphPeptide peptide, Map<String, Collection<BigDecimal>> foundMods ) {
-		
+				
 		if( peptide.getModifications() == null || peptide.getModifications().keySet().size() < 1 )
 			return;
 		

@@ -144,9 +144,6 @@ public class MetaMorphResultsParser {
 	 */
 	private MetaMorphReportedPeptide getCrosslinkReportedPeptide( SearchHit searchHit, AnalysisParameters analysis ) throws Exception {
 		
-		//System.out.println( searchHit.getPeptide() );
-		//System.out.println( "\t" + searchHit.getXlinkType() );
-		
 		MetaMorphReportedPeptideBuilder reportedPeptideBuilder = new MetaMorphReportedPeptideBuilder();
 		reportedPeptideBuilder.setType( SearchConstants.LINK_TYPE_CROSSLINK );
 				
@@ -309,7 +306,7 @@ public class MetaMorphResultsParser {
 			
 			for( ModAminoacidMass mam : modInfo.getModAminoacidMass() ) {
 				
-				int position = mam.getPosition().intValue() - 1;				
+				int position = mam.getPosition().intValue();				
 				double massDifferenceDouble = mam.getMass();
 				
 				if( !mods.containsKey( position ) )
@@ -344,7 +341,7 @@ public class MetaMorphResultsParser {
 			
 			for( ModAminoacidMass mam : modInfo.getModAminoacidMass() ) {
 				
-				int position = mam.getPosition().intValue() - 1;				
+				int position = mam.getPosition().intValue();				
 				double massDifferenceDouble = mam.getMass();
 				
 				if( !mods.containsKey( position ) )
