@@ -24,7 +24,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
 import org.yeastrc.proxl.xml.metamorph.linkers.MetaMorphLinker;
-import org.yeastrc.proxl.xml.metamorph.reader.ConfReader;
 
 import net.systemsbiology.regis_web.pepxml.MsmsPipelineAnalysis;
 
@@ -52,7 +51,6 @@ public class AnalysisParameters {
 	
 	
 	private MsmsPipelineAnalysis analysis;
-	private ConfReader confReader;
 	private File fastaFile;
 	private String confFilePath;
 	private MetaMorphLinker linker;
@@ -76,14 +74,6 @@ public class AnalysisParameters {
 
 	public void setFastaFile(File fastaFile) {
 		this.fastaFile = fastaFile;
-	}
-
-	public ConfReader getConfReader() {
-		return confReader;
-	}
-
-	public void setConfReader(ConfReader kojakConfReader) {
-		this.confReader = kojakConfReader;
 	}
 	/**
 	 * @return the linker

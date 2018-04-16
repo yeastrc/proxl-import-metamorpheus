@@ -24,7 +24,7 @@ import java.io.InputStreamReader;
 
 import org.yeastrc.proxl.xml.metamorph.builder.XMLBuilder;
 import org.yeastrc.proxl.xml.metamorph.objects.AnalysisParameters;
-import org.yeastrc.proxl.xml.metamorph.reader.ConfReader;
+import org.yeastrc.proxl.xml.metamorph.reader.LinkerProcessorFromConfFile;
 
 import jargs.gnu.CmdLineParser;
 import jargs.gnu.CmdLineParser.IllegalOptionValueException;
@@ -42,18 +42,16 @@ public class MainProgram {
 	public void convertSearch( String pepXMLFilePath,
 			                   String outFilePath,
 			                   String fastaFilePath,
-			                   String confFilePath
+			                   String confFilePath,
+			                   String userSuppliedLinkerName
 			                  ) throws Exception {
 		
 		AnalysisParameters analysis = AnalysisParameters.loadAnalysis( pepXMLFilePath );
 		
-		analysis.setConfReader( ConfReader.getInstance( confFilePath ) );
-
 		analysis.setConfFilePath( confFilePath );
 		analysis.setFastaFile( new File( fastaFilePath ) );
+		analysis.setLinker( LinkerProcessorFromConfFile.createInstance().getLinkerFromConfFile( confFilePath, userSuppliedLinkerName )  );
 		
-		
-		analysis.setLinker( analysis.getConfReader().getMetaMorphLinker() );		
 		System.err.println( "\tGot linker: " + analysis.getLinker() );
 		
 		
@@ -74,6 +72,7 @@ public class MainProgram {
 		CmdLineParser.Option outfileOpt = cmdLineParser.addStringOption( 'o', "out-file" );	
 		CmdLineParser.Option confOpt = cmdLineParser.addStringOption( 'c', "conf" );	
 		CmdLineParser.Option fastaOpt = cmdLineParser.addStringOption( 'f', "fasta-file" );
+		CmdLineParser.Option linkerOpt = cmdLineParser.addStringOption( 'l', "linker" );
 
         // parse command line options
         try { cmdLineParser.parse(args); }
@@ -170,12 +169,17 @@ public class MainProgram {
         	System.exit( 1 );
         }
         
+        // get the user supplied linker name
+        String userSuppliedLinkerName = (String)cmdLineParser.getOptionValue( linkerOpt );
         
         System.err.println( "Converting MetaMorpheus to ProXL XML with the following parameters:" );
         System.err.println( "\tpepXML path: " + pepXMLFilePath );
         System.err.println( "\toutput file path: " + outFilePath );
         System.err.println( "\tfasta file path: " + fastaFilePath );
         System.err.println( "\tconf file path: " + confFilePath );
+        
+        if( userSuppliedLinkerName != null )
+        	System.err.println( "\tlinker name: " + userSuppliedLinkerName );
              
         /*
          * Run the conversion
@@ -184,7 +188,8 @@ public class MainProgram {
         mp.convertSearch( pepXMLFilePath,
         		          outFilePath,
         		          fastaFilePath,
-        		          confFilePath
+        		          confFilePath,
+        		          userSuppliedLinkerName
         		         );
 
         
