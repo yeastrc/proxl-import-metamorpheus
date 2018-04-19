@@ -183,16 +183,18 @@ public class XMLBuilder {
 		//
 		// Define the static mods
 		//
-		StaticModifications smods = new StaticModifications();
-		proxlInputRoot.setStaticModifications( smods );
-		
-		for( String moddedResidue : staticMods.keySet() ) {
-				
-				StaticModification xmlSmod = new StaticModification();
-				xmlSmod.setAminoAcid( moddedResidue );
-				xmlSmod.setMassChange( staticMods.get( moddedResidue ) );
-				
-				smods.getStaticModification().add( xmlSmod );
+		if( staticMods.keySet().size() > 1 ) {
+			StaticModifications smods = new StaticModifications();
+			proxlInputRoot.setStaticModifications( smods );
+			
+			for( String moddedResidue : staticMods.keySet() ) {
+					
+					StaticModification xmlSmod = new StaticModification();
+					xmlSmod.setAminoAcid( moddedResidue );
+					xmlSmod.setMassChange( staticMods.get( moddedResidue ) );
+					
+					smods.getStaticModification().add( xmlSmod );
+			}
 		}
 		
 		//
