@@ -85,7 +85,12 @@ public class LinkerProcessorFromConfFile {
 				
 				String[] fields = line.split( " = " );
 				
-				
+
+				if( fields.length < 1 ) {
+					line = br.readLine();
+					continue;
+				}
+
 				if( fields[ 0 ].equals( "UdXLkerName" ) )
 					linker.setMetaMorphName( fields[ 1 ].replaceAll( "\"", "" ) );
 				
@@ -150,7 +155,11 @@ public class LinkerProcessorFromConfFile {
 			while( line != null ) {
 				
 				String[] fields = line.split( " = " );
-				
+
+				if( fields.length < 1 ) {
+					line = br.readLine();
+					continue;
+				}
 				
 				if( fields[ 0 ].equals( "CrosslinkerType" ) )
 					return fields[ 1 ].replaceAll( "\"", "" );
