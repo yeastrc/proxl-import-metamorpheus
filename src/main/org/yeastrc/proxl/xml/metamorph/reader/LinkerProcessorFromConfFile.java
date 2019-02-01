@@ -22,6 +22,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashSet;
 
 import org.yeastrc.proxl.xml.metamorph.linkers.MetaMorphLinker;
@@ -67,8 +68,21 @@ public class LinkerProcessorFromConfFile {
 	 * @return
 	 * @throws IOException
 	 */
-	public MetaMorphLinker getUserDefinedLinkerFromConfFile( String filename, String userSuppliedProxlLinkerName ) throws IOException {	
-		
+	public MetaMorphLinker getUserDefinedLinkerFromConfFile( String filename, String userSuppliedProxlLinkerName ) throws IOException {
+
+		Collection<String> linkerCrosslinkMassNames = new HashSet<>();
+		linkerCrosslinkMassNames.add( "UdXLkerTotalMass" );
+		linkerCrosslinkMassNames.add( "UdXLkerLoopMass" );
+		linkerCrosslinkMassNames.add( "CrosslinkerTotalMass" );
+
+		Collection<String> linkerDeadEndMassNames = new HashSet<>();
+		linkerDeadEndMassNames.add( "UdXLkerDeadendMassH2O" );
+		linkerDeadEndMassNames.add( "UdXLkerDeadendMassNH2" );
+		linkerDeadEndMassNames.add( "UdXLkerDeadendMassTris" );
+		linkerDeadEndMassNames.add( "CrosslinkerDeadEndMassH2O" );
+		linkerDeadEndMassNames.add( "CrosslinkerDeadEndMassNH2" );
+		linkerDeadEndMassNames.add( "CrosslinkerDeadEndMassTris" );
+
 		File confFile = new File( filename );
 		
 		MetaMorphLinker linker = new MetaMorphLinker();
@@ -91,11 +105,10 @@ public class LinkerProcessorFromConfFile {
 					continue;
 				}
 
-				if( fields[ 0 ].equals( "UdXLkerName" ) )
+				if( fields[ 0 ].equals( "UdXLkerName" ) || fields[ 0 ].equals( "CrosslinkerName" ) )
 					linker.setMetaMorphName( fields[ 1 ].replaceAll( "\"", "" ) );
 				
-				else if( fields[ 0 ].equals( "UdXLkerTotalMass" ) ||
-						 fields[ 0 ].equals( "UdXLkerLoopMass" ) ) {
+				else if( linkerCrosslinkMassNames.contains( fields[ 0 ] ) ) {
 					
 					double mass = Double.valueOf( fields[ 1 ] );
 					
@@ -105,9 +118,7 @@ public class LinkerProcessorFromConfFile {
 					linker.getCrosslinkMasses().add( mass );					
 				}
 
-				else if( fields[ 0 ].equals( "UdXLkerDeadendMassH2O" ) ||
-						 fields[ 0 ].equals( "UdXLkerDeadendMassNH2" ) ||
-						 fields[ 0 ].equals( "UdXLkerDeadendMassTris" ) ) {
+				else if( linkerDeadEndMassNames.contains( fields[ 0 ] ) ) {
 					
 					double mass = Double.valueOf( fields[ 1 ] );
 					
