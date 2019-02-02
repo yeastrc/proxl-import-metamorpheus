@@ -54,6 +54,10 @@ public class MainProgram {
 		analysis.setLinker( LinkerProcessorFromConfFile.createInstance().getLinkerFromConfFile( confFilePath, userSuppliedLinkerName )  );
 		
 		System.err.println( "\tGot linker: " + analysis.getLinker() );
+
+		if( analysis.getLinker().getProxlName() == null ) {
+			throw new Exception( "Could not find a proxl-recognizable name for cross-linker.\nPlease supply a name using the -l parameter.\nRun this program with no arguments for help and to see list of valid linkers." );
+		}
 		
 		
 		XMLBuilder builder = new XMLBuilder();
@@ -187,17 +191,25 @@ public class MainProgram {
         /*
          * Run the conversion
          */
-        MainProgram mp = new MainProgram();
-        mp.convertSearch( pepXMLFilePath,
-        		          outFilePath,
-        		          fastaFilePath,
-        		          confFilePath,
-        		          userSuppliedLinkerName
-        		         );
+        try {
+			MainProgram mp = new MainProgram();
+			mp.convertSearch(pepXMLFilePath,
+					outFilePath,
+					fastaFilePath,
+					confFilePath,
+					userSuppliedLinkerName
+			);
 
-        
-        System.err.println( "Done." );        
-        System.exit( 0 );        
+
+			System.err.println("Done.");
+			System.exit(0);
+		} catch( Throwable t ) {
+
+        	System.out.println( "\nError encountered:" );
+        	System.out.println( t.getMessage() );
+        	System.exit( 1 );
+
+		}
 	}
 	
 	public static void printHelp() {
