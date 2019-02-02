@@ -9,7 +9,7 @@ proxl XML suitable for import into the proxl web application.
 How To Run
 -------------
 1. Download the [latest release](https://github.com/yeastrc/proxl-import-metamorpheus/releases).
-2. Run the program ``java -jar metaMorpheus2ProxlXML.jar`` with no arguments to see the possible parameters.
+2. Run the program ``java -jar metaMorph2ProxlXML.jar`` with no arguments to see the possible parameters.
 
 For more information on importing data into Proxl, please see the [Proxl Import Documentation](http://proxl-web-app.readthedocs.io/en/latest/using/upload_data.html).
 
