@@ -22,17 +22,19 @@ import java.util.Collection;
 import java.util.HashSet;
 
 public class MetaMorphLinker {
-	
-	
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
+
 	@Override
 	public String toString() {
-		return "MetaMorphLinker [crosslinkMasses=" + crosslinkMasses + ", monolinkMasses=" + monolinkMasses
-				+ ", metaMorphName=" + metaMorphName + ", proxlName=" + proxlName + "]";
+		return "MetaMorphLinker{" +
+				"crosslinkMasses=" + crosslinkMasses +
+				", cleavedCrosslinkMasses=" + cleavedCrosslinkMasses +
+				", monolinkMasses=" + monolinkMasses +
+				", metaMorphName='" + metaMorphName + '\'' +
+				", proxlName='" + proxlName + '\'' +
+				", isCleavable=" + isCleavable +
+				'}';
 	}
+
 	/**
 	 * @return the crosslinkMasses
 	 */
@@ -81,10 +83,28 @@ public class MetaMorphLinker {
 	public void setProxlName(String proxlName) {
 		this.proxlName = proxlName;
 	}
-	
+
+	public Collection<Double> getCleavedCrosslinkMasses() {
+		return cleavedCrosslinkMasses;
+	}
+
+	public void setCleavedCrosslinkMasses(Collection<Double> cleavedCrosslinkMasses) {
+		this.cleavedCrosslinkMasses = cleavedCrosslinkMasses;
+	}
+
+	public boolean isCleavable() {
+		return isCleavable;
+	}
+
+	public void setCleavable(boolean cleavable) {
+		isCleavable = cleavable;
+	}
+
 	private Collection<Double> crosslinkMasses = new HashSet<>();
+	private Collection<Double> cleavedCrosslinkMasses = new HashSet<>();
 	private Collection<Double> monolinkMasses = new HashSet<>();
 	private String metaMorphName;
 	private String proxlName;
+	private boolean isCleavable;
 	
 }

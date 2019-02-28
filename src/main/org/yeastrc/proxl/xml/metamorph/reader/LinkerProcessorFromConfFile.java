@@ -83,6 +83,10 @@ public class LinkerProcessorFromConfFile {
 		linkerDeadEndMassNames.add( "CrosslinkerDeadEndMassNH2" );
 		linkerDeadEndMassNames.add( "CrosslinkerDeadEndMassTris" );
 
+		Collection<String> linkerCleavedLinkerMassNames = new HashSet<>();
+		linkerCleavedLinkerMassNames.add( "CrosslinkerShortMass" );
+		linkerCleavedLinkerMassNames.add( "CrosslinkerLongMass" );
+
 		File confFile = new File( filename );
 		
 		MetaMorphLinker linker = new MetaMorphLinker();
@@ -105,9 +109,19 @@ public class LinkerProcessorFromConfFile {
 					continue;
 				}
 
-				if( fields[ 0 ].equals( "UdXLkerName" ) || fields[ 0 ].equals( "CrosslinkerName" ) )
-					linker.setMetaMorphName( fields[ 1 ].replaceAll( "\"", "" ) );
-				
+				if( fields[ 0 ].equals( "UdXLkerName" ) || fields[ 0 ].equals( "CrosslinkerName" ) ) {
+					linker.setMetaMorphName(fields[1].replaceAll("\"", ""));
+				}
+
+				else if( fields[ 0 ].equals( "IsCleavable" ) ) {
+
+					if( fields[ 1 ].equals( "true" ) ) {
+						linker.setCleavable( true );
+					} else {
+						linker.setCleavable( false );
+					}
+				}
+
 				else if( linkerCrosslinkMassNames.contains( fields[ 0 ] ) ) {
 					
 					double mass = Double.valueOf( fields[ 1 ] );
@@ -127,8 +141,16 @@ public class LinkerProcessorFromConfFile {
 					
 					linker.getMonolinkMasses().add( mass );					
 				}
-				
-				
+
+				else if( linkerCleavedLinkerMassNames.contains( fields[ 0 ] ) ) {
+
+					double mass = Double.valueOf( fields[ 1 ] );
+
+					if( linker.getCleavedCrosslinkMasses() == null )
+						linker.setCleavedCrosslinkMasses( new HashSet<>() );
+
+					linker.getCleavedCrosslinkMasses().add( mass );
+				}
 				
 				line = br.readLine();
 			}

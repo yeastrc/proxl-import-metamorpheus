@@ -34,7 +34,13 @@ public class MetaMorphLinkerFactory {
 			
 			linker.setMetaMorphName( "DSSO" );
 			linker.setProxlName( "dsso" );
+			linker.setCleavable( true );
+
 			linker.getCrosslinkMasses().add( 158.0038 );
+
+			linker.getCleavedCrosslinkMasses().add( 54.01056);
+			linker.getCleavedCrosslinkMasses().add( 103.9932 );
+
 			linker.getMonolinkMasses().add( 176.0143 );
 			linker.getMonolinkMasses().add( 175.0303 );
 			linker.getMonolinkMasses().add( 279.0777 );
@@ -47,6 +53,7 @@ public class MetaMorphLinkerFactory {
 			
 			linker.setMetaMorphName( "DSS" );
 			linker.setProxlName( "dss" );
+			linker.setCleavable( false );
 			linker.getCrosslinkMasses().add( 138.06808 );
 			linker.getMonolinkMasses().add( 156.0786 );
 			linker.getMonolinkMasses().add( 155.0946 );

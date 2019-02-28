@@ -38,37 +38,8 @@ import org.yeastrc.proxl.xml.metamorph.reader.MetaMorphResultsParser;
 import org.yeastrc.proxl.xml.metamorph.reader.StaticModProcessor;
 import org.yeastrc.proxl.xml.metamorph.utils.ModUtils;
 import org.yeastrc.proxl.xml.metamorph.utils.PepXMLUtils;
-import org.yeastrc.proxl_import.api.xml_dto.AnnotationSortOrder;
-import org.yeastrc.proxl_import.api.xml_dto.ConfigurationFile;
-import org.yeastrc.proxl_import.api.xml_dto.ConfigurationFiles;
-import org.yeastrc.proxl_import.api.xml_dto.CrosslinkMass;
-import org.yeastrc.proxl_import.api.xml_dto.CrosslinkMasses;
-import org.yeastrc.proxl_import.api.xml_dto.DefaultVisibleAnnotations;
-import org.yeastrc.proxl_import.api.xml_dto.FilterablePsmAnnotation;
-import org.yeastrc.proxl_import.api.xml_dto.FilterablePsmAnnotationTypes;
-import org.yeastrc.proxl_import.api.xml_dto.FilterablePsmAnnotations;
-import org.yeastrc.proxl_import.api.xml_dto.LinkType;
-import org.yeastrc.proxl_import.api.xml_dto.LinkedPosition;
-import org.yeastrc.proxl_import.api.xml_dto.LinkedPositions;
-import org.yeastrc.proxl_import.api.xml_dto.Linker;
-import org.yeastrc.proxl_import.api.xml_dto.Linkers;
-import org.yeastrc.proxl_import.api.xml_dto.Modification;
-import org.yeastrc.proxl_import.api.xml_dto.Modifications;
-import org.yeastrc.proxl_import.api.xml_dto.Peptide;
-import org.yeastrc.proxl_import.api.xml_dto.Peptides;
-import org.yeastrc.proxl_import.api.xml_dto.ProxlInput;
-import org.yeastrc.proxl_import.api.xml_dto.Psm;
-import org.yeastrc.proxl_import.api.xml_dto.PsmAnnotationSortOrder;
-import org.yeastrc.proxl_import.api.xml_dto.Psms;
-import org.yeastrc.proxl_import.api.xml_dto.ReportedPeptide;
-import org.yeastrc.proxl_import.api.xml_dto.ReportedPeptides;
-import org.yeastrc.proxl_import.api.xml_dto.SearchProgram;
+import org.yeastrc.proxl_import.api.xml_dto.*;
 import org.yeastrc.proxl_import.api.xml_dto.SearchProgram.PsmAnnotationTypes;
-import org.yeastrc.proxl_import.api.xml_dto.SearchProgramInfo;
-import org.yeastrc.proxl_import.api.xml_dto.SearchPrograms;
-import org.yeastrc.proxl_import.api.xml_dto.StaticModification;
-import org.yeastrc.proxl_import.api.xml_dto.StaticModifications;
-import org.yeastrc.proxl_import.api.xml_dto.VisiblePsmAnnotations;
 import org.yeastrc.proxl_import.create_import_file_from_java_objects.main.CreateImportFileFromJavaObjectsMain;
 
 public class XMLBuilder {
@@ -158,6 +129,17 @@ public class XMLBuilder {
 			
 			// set the mass for this crosslinker to the calculated mass for the crosslinker, as defined in the properties file
 			xlinkMass.setMass( BigDecimal.valueOf( mass ) );
+		}
+
+		if( analysis.getLinker().isCleavable() ) {
+
+			for( Double mass : analysis.getLinker().getCleavedCrosslinkMasses() ) {
+				CleavedCrosslinkMass cleavedXlinkMass = new CleavedCrosslinkMass();
+				linker.getCrosslinkMasses().getCleavedCrosslinkMass().add( cleavedXlinkMass );
+
+				// set the mass for this crosslinker to the calculated mass for the crosslinker, as defined in the properties file
+				cleavedXlinkMass.setMass( BigDecimal.valueOf( mass ) );
+			}
 		}
 		
 		
