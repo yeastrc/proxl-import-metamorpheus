@@ -37,7 +37,7 @@ Usage:
   java -jar metamorph2ProxlXML.jar -x .\Task1-XLSearchTask\my-edc-data.pep.XML
   -c ".\Task Settings\Task1-XLSearchTaskconfig.toml"
   -f ..\fastas\small_fasta.fasta
-  -o my-edc-data.limelight.xml
+  -o my-edc-data.proxl.xml
   -l edc
 
   More information: https://github.com/yeastrc/proxl-import-metamorpheus
