@@ -61,6 +61,40 @@ public class MetaMorphLinkerFactory {
 			
 			_LINKER_MAP.put( "DSS", linker );
 		}
+
+		{
+			MetaMorphLinker linker = new MetaMorphLinker();
+
+			linker.setMetaMorphName( "DisulfideBond" );
+			linker.setProxlName( "DisulfideBond" );
+			linker.setCleavable( true );
+
+			linker.getCrosslinkMasses().add( -2.01565 );
+
+			linker.getCleavedCrosslinkMasses().add( -33.98772 );
+			linker.getCleavedCrosslinkMasses().add( 31.97207 );
+
+			_LINKER_MAP.put( "DisulfideBond", linker );
+		}
+
+		{
+			MetaMorphLinker linker = new MetaMorphLinker();
+
+			linker.setMetaMorphName( "DSBU" );
+			linker.setProxlName( "dsbu" );
+			linker.setCleavable( true );
+
+			linker.getCrosslinkMasses().add( 196.0848 );
+
+			linker.getCleavedCrosslinkMasses().add( 85.05276);
+			linker.getCleavedCrosslinkMasses().add( 111.0320 );
+
+			linker.getMonolinkMasses().add( 214.0954 );
+			linker.getMonolinkMasses().add( 213.1113 );
+			linker.getMonolinkMasses().add( 317.1587 );
+
+			_LINKER_MAP.put( "DSBU", linker );
+		}
 		
 		
 	}
