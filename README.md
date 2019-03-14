@@ -39,11 +39,14 @@ Usage:
                             the search.
      
      -l or --linker       : Optional. If the linker was not set to the
-                            built-in "DSS" or "DSSO" linkers using the GUI
-                            and a user-defined linker was used in this search
-                            (such as BS3 or EDC), use this to specify the
-                            linker name that proxl will recognize. See below
-                            for currently-supported values.
+                            built-in "DSS" or "DSSO" linkers using the GUI,
+                            you must use this to specify the name of the
+                            cross-linker (e.g., edc or bs3). Proxl will
+                            attempt to match this name to cross-linkers it
+                            knows about. Unknown linkers may be uploaded to
+                            proxl, but some features (such as marking
+                            linkable positions in proteins) may not be
+                            available. See below for list of known linkers.
  
  Example:
  
@@ -53,9 +56,15 @@ Usage:
   java -jar metamorph2ProxlXML.jar -x ./results.pep.xml -o ./results.proxl.xml\
   -f /data/mass_spec/yeast.fa -c ./XLSearchTaskconfig.toml -l edc
 
+  java -jar metamorph2ProxlXML.jar -x .\Task1-XLSearchTask\my-edc-data.pep.XML
+  -c ".\Task Settings\Task1-XLSearchTaskconfig.toml"
+  -f ..\fastas\small_fasta.fasta
+  -o my-edc-data.limelight.xml
+  -l edc
+
   More information: https://github.com/yeastrc/proxl-import-metamorpheus
 
- Currently-supported linkers:
+ Currently-known linkers:
  * dss
  * bs3
  * edc
