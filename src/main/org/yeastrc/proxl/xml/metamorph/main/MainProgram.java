@@ -54,11 +54,6 @@ public class MainProgram {
 		analysis.setLinker( LinkerProcessorFromConfFile.createInstance().getLinkerFromConfFile( confFilePath, userSuppliedLinkerName )  );
 		
 		System.err.println( "\tGot linker: " + analysis.getLinker() );
-
-		if( analysis.getLinker().getProxlName() == null ) {
-			throw new Exception( "Could not find a proxl-recognizable name for cross-linker.\nPlease supply a name using the -l parameter.\nRun this program with no arguments for help and to see list of valid linkers." );
-		}
-		
 		
 		XMLBuilder builder = new XMLBuilder();
 		builder.buildAndSaveXML(analysis, new File( outFilePath ) );		

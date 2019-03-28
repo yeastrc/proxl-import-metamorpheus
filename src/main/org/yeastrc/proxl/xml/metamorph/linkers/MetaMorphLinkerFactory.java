@@ -18,8 +18,7 @@
 
 package org.yeastrc.proxl.xml.metamorph.linkers;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class MetaMorphLinkerFactory {
 
@@ -44,7 +43,15 @@ public class MetaMorphLinkerFactory {
 			linker.getMonolinkMasses().add( 176.0143 );
 			linker.getMonolinkMasses().add( 175.0303 );
 			linker.getMonolinkMasses().add( 279.0777 );
-			
+
+			List<MetaMorphLinkerEnd> linkerEnds = new ArrayList<>(2);
+			Collection<String> linkableResidues = new HashSet<>();
+			linkableResidues.add( "K" );
+
+			linkerEnds.add( new MetaMorphLinkerEnd( linkableResidues, false, false ) );
+			linkerEnds.add( new MetaMorphLinkerEnd( linkableResidues, false, false ) );
+			linker.setLinkerEnds( linkerEnds );
+
 			_LINKER_MAP.put( "DSSO", linker );
 		}
 		
@@ -58,7 +65,15 @@ public class MetaMorphLinkerFactory {
 			linker.getMonolinkMasses().add( 156.0786 );
 			linker.getMonolinkMasses().add( 155.0946 );
 			linker.getMonolinkMasses().add( 259.142 );
-			
+
+			List<MetaMorphLinkerEnd> linkerEnds = new ArrayList<>(2);
+			Collection<String> linkableResidues = new HashSet<>();
+			linkableResidues.add( "K" );
+
+			linkerEnds.add( new MetaMorphLinkerEnd( linkableResidues, false, false ) );
+			linkerEnds.add( new MetaMorphLinkerEnd( linkableResidues, false, false ) );
+			linker.setLinkerEnds( linkerEnds );
+
 			_LINKER_MAP.put( "DSS", linker );
 		}
 
@@ -73,6 +88,14 @@ public class MetaMorphLinkerFactory {
 
 			linker.getCleavedCrosslinkMasses().add( -33.98772 );
 			linker.getCleavedCrosslinkMasses().add( 31.97207 );
+
+			List<MetaMorphLinkerEnd> linkerEnds = new ArrayList<>(2);
+			Collection<String> linkableResidues = new HashSet<>();
+			linkableResidues.add( "C" );
+
+			linkerEnds.add( new MetaMorphLinkerEnd( linkableResidues, false, false ) );
+			linkerEnds.add( new MetaMorphLinkerEnd( linkableResidues, false, false ) );
+			linker.setLinkerEnds( linkerEnds );
 
 			_LINKER_MAP.put( "DisulfideBond", linker );
 		}
@@ -92,6 +115,14 @@ public class MetaMorphLinkerFactory {
 			linker.getMonolinkMasses().add( 214.0954 );
 			linker.getMonolinkMasses().add( 213.1113 );
 			linker.getMonolinkMasses().add( 317.1587 );
+
+			List<MetaMorphLinkerEnd> linkerEnds = new ArrayList<>(2);
+			Collection<String> linkableResidues = new HashSet<>();
+			linkableResidues.add( "K" );
+
+			linkerEnds.add( new MetaMorphLinkerEnd( linkableResidues, false, false ) );
+			linkerEnds.add( new MetaMorphLinkerEnd( linkableResidues, false, false ) );
+			linker.setLinkerEnds( linkerEnds );
 
 			_LINKER_MAP.put( "DSBU", linker );
 		}

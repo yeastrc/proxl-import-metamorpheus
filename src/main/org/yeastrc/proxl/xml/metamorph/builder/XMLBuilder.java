@@ -30,6 +30,8 @@ import java.util.Map;
 import org.yeastrc.proxl.xml.metamorph.annotations.PSMAnnotationTypes;
 import org.yeastrc.proxl.xml.metamorph.annotations.PSMDefaultVisibleAnnotationTypes;
 import org.yeastrc.proxl.xml.metamorph.constants.SearchConstants;
+import org.yeastrc.proxl.xml.metamorph.linkers.MetaMorphLinker;
+import org.yeastrc.proxl.xml.metamorph.linkers.MetaMorphLinkerEnd;
 import org.yeastrc.proxl.xml.metamorph.objects.AnalysisParameters;
 import org.yeastrc.proxl.xml.metamorph.objects.MetaMorphPSM;
 import org.yeastrc.proxl.xml.metamorph.objects.MetaMorphPeptide;
@@ -119,7 +121,21 @@ public class XMLBuilder {
 		linkers.getLinker().add( linker );
 		
 		linker.setName( analysis.getLinker().getProxlName() );
-		
+
+		LinkedEnds xLinkedEnds = new LinkedEnds();
+		linker.setLinkedEnds( xLinkedEnds );
+
+		for(MetaMorphLinkerEnd metaLinkerEnd : analysis.getLinker().getLinkerEnds() ) {
+
+			LinkedEnd xLinkedEnd = new LinkedEnd();
+			xLinkedEnds.getLinkedEnd().add( xLinkedEnd );
+
+			Residues xResidues = new Residues();
+			xResidues.getResidue().addAll( metaLinkerEnd.getLinkableResidues() );
+
+			xLinkedEnd.setResidues( xResidues );
+		}
+
 		CrosslinkMasses masses = new CrosslinkMasses();
 		linker.setCrosslinkMasses( masses );
 		

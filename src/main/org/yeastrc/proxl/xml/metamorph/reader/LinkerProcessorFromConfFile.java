@@ -22,10 +22,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.*;
 
 import org.yeastrc.proxl.xml.metamorph.linkers.MetaMorphLinker;
+import org.yeastrc.proxl.xml.metamorph.linkers.MetaMorphLinkerEnd;
 import org.yeastrc.proxl.xml.metamorph.linkers.MetaMorphLinkerFactory;
 
 public class LinkerProcessorFromConfFile {
@@ -48,7 +48,6 @@ public class LinkerProcessorFromConfFile {
 
 		if( metaMorphLinkerName == null )
 			throw new RuntimeException( "Error: Could not find a cross-linker defined in toml file: " + filename );
-		
 		
 		if( metaMorphLinkerName.equals( "UserDefined" ) )
 			return getUserDefinedLinkerFromConfFile( filename, userSuppliedProxlLinkerName );
@@ -91,6 +90,9 @@ public class LinkerProcessorFromConfFile {
 		
 		MetaMorphLinker linker = new MetaMorphLinker();
 		linker.setProxlName( userSuppliedProxlLinkerName );
+
+		List<MetaMorphLinkerEnd> linkerEnds = new ArrayList<>(2);
+		linker.setLinkerEnds( linkerEnds );
 		
 		BufferedReader br = null;
 		
@@ -111,6 +113,10 @@ public class LinkerProcessorFromConfFile {
 
 				if( fields[ 0 ].equals( "UdXLkerName" ) || fields[ 0 ].equals( "CrosslinkerName" ) ) {
 					linker.setMetaMorphName(fields[1].replaceAll("\"", ""));
+
+					if( userSuppliedProxlLinkerName == null || userSuppliedProxlLinkerName.length() < 1 ) {
+						linker.setProxlName(fields[1].replaceAll("\"", "").toLowerCase());
+					}
 				}
 
 				else if( fields[ 0 ].equals( "IsCleavable" ) ) {
@@ -120,6 +126,23 @@ public class LinkerProcessorFromConfFile {
 					} else {
 						linker.setCleavable( false );
 					}
+				}
+
+				else if( fields[ 0 ].equals( "CrosslinkerResidues" ) ||
+						fields[ 0 ].equals( "CrosslinkerResidues2" ) ) {
+
+					Collection<String> residues = new HashSet<>();
+
+					// remove teh quotes
+					String residuesField = fields[ 1 ].replaceAll( "\\\"", "" );
+
+					for (int i = 0; i < residuesField.length(); i++){
+						String residue = String.valueOf(residuesField.charAt(i));
+						residues.add( residue );
+					}
+
+					MetaMorphLinkerEnd linkerEnd = new MetaMorphLinkerEnd( residues, false, false );
+					linkerEnds.add( linkerEnd );
 				}
 
 				else if( linkerCrosslinkMassNames.contains( fields[ 0 ] ) ) {
@@ -163,7 +186,11 @@ public class LinkerProcessorFromConfFile {
 		
 		if( linker.getCrosslinkMasses() == null )
 			throw new RuntimeException( "\tError: Got no cross-link massess defined for linker in toml file: " + filename );
-		
+
+		if( linkerEnds.size() != 2 ) {
+			throw new RuntimeException( "\tError. Did not get two linkable ends of the cross-linker." );
+		}
+
 		return linker;
 	}
 

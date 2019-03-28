@@ -16,15 +16,10 @@ Usage:
      -f or --fasta-file   : Required. Full path to the fasta file used in
                             the search.
      
-     -l or --linker       : Optional. If the linker was not set to the
-                            built-in "DSS" or "DSSO" linkers using the GUI,
-                            you must use this to specify the name of the
-                            cross-linker (e.g., edc or bs3). Proxl will
-                            attempt to match this name to cross-linkers it
-                            knows about. Unknown linkers may be uploaded to
-                            proxl, but some features (such as marking
-                            linkable positions in proteins) may not be
-                            available. See below for list of known linkers.
+     -l or --linker       : Optional. By default, the name for the cross-linker
+                            will be taken from the config file for the search
+                            (ie, the toml file). Use this option to override
+                            the name for the linker.
 
  Example:
  
@@ -41,14 +36,3 @@ Usage:
   -l edc
 
   More information: https://github.com/yeastrc/proxl-import-metamorpheus
-
- Currently-known linkers:
- 	dss
-	bs3
-	edc
-	bs2
-	sulfo-smcc
-	dsso
-	
-	bs3.sty (supports links from K/nterm-K/S/T/Y/nterm)
-	dss.sty (supports links from K/nterm-K/S/T/Y/nterm)

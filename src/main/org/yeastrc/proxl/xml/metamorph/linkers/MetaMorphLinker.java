@@ -20,20 +20,9 @@ package org.yeastrc.proxl.xml.metamorph.linkers;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 public class MetaMorphLinker {
-
-	@Override
-	public String toString() {
-		return "MetaMorphLinker{" +
-				"crosslinkMasses=" + crosslinkMasses +
-				", cleavedCrosslinkMasses=" + cleavedCrosslinkMasses +
-				", monolinkMasses=" + monolinkMasses +
-				", metaMorphName='" + metaMorphName + '\'' +
-				", proxlName='" + proxlName + '\'' +
-				", isCleavable=" + isCleavable +
-				'}';
-	}
 
 	/**
 	 * @return the crosslinkMasses
@@ -100,11 +89,33 @@ public class MetaMorphLinker {
 		isCleavable = cleavable;
 	}
 
+	@Override
+	public String toString() {
+		return "MetaMorphLinker{" +
+				"crosslinkMasses=" + crosslinkMasses +
+				", cleavedCrosslinkMasses=" + cleavedCrosslinkMasses +
+				", monolinkMasses=" + monolinkMasses +
+				", metaMorphName='" + metaMorphName + '\'' +
+				", proxlName='" + proxlName + '\'' +
+				", isCleavable=" + isCleavable +
+				", linkerEnds=" + linkerEnds +
+				'}';
+	}
+
+	public List<MetaMorphLinkerEnd> getLinkerEnds() {
+		return linkerEnds;
+	}
+
+	public void setLinkerEnds(List<MetaMorphLinkerEnd> linkerEnds) {
+		this.linkerEnds = linkerEnds;
+	}
+
 	private Collection<Double> crosslinkMasses = new HashSet<>();
 	private Collection<Double> cleavedCrosslinkMasses = new HashSet<>();
 	private Collection<Double> monolinkMasses = new HashSet<>();
 	private String metaMorphName;
 	private String proxlName;
 	private boolean isCleavable;
+	private List<MetaMorphLinkerEnd> linkerEnds;
 	
 }
