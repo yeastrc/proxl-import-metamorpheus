@@ -37,11 +37,6 @@ Usage:
                           
      -f or --fasta-file   : Required. Full path to the fasta file used in
                             the search.
-     
-     -l or --linker       : Optional. By default, the name for the cross-linker
-                            will be taken from the config file for the search
-                            (ie, the toml file). Use this option to override
-                            the name for the linker.
 
  Example:
  
@@ -49,13 +44,12 @@ Usage:
   -f /data/mass_spec/yeast.fa -c ./XLSearchTaskconfig.toml
 
   java -jar metamorph2ProxlXML.jar -x ./results.pep.xml -o ./results.proxl.xml\
-  -f /data/mass_spec/yeast.fa -c ./XLSearchTaskconfig.toml -l edc
+  -f /data/mass_spec/yeast.fa -c ./XLSearchTaskconfig.toml
 
   java -jar metamorph2ProxlXML.jar -x .\Task1-XLSearchTask\my-edc-data.pep.XML
   -c ".\Task Settings\Task1-XLSearchTaskconfig.toml"
   -f ..\fastas\small_fasta.fasta
   -o my-edc-data.proxl.xml
-  -l edc
 
   More information: https://github.com/yeastrc/proxl-import-metamorpheus
 
