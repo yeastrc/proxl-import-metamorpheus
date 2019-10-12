@@ -319,11 +319,12 @@ public class MetaMorphResultsParser {
 				
 		return new MetaMorphPeptide( peptideBuilder );
 	}
-	
+
 	/**
 	 * Get the MetaMorphPeptide from the searchHit. Includes the peptide sequence and any mods.
-	 * 
-	 * @param searchHit
+	 *
+	 * @param linkedPeptide
+	 * @param analysis
 	 * @return
 	 * @throws Exception
 	 */
