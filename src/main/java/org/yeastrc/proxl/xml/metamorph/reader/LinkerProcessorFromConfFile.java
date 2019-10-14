@@ -47,172 +47,84 @@ public class LinkerProcessorFromConfFile {
 
 		Toml confToml = new Toml().read( new File( filename ) );
 
-		String metaMorphLinkerName = getLinkerNameFromConfFile( confToml );
+		// if it is the "old style", parse it appropriately
+		if( getIsConfFilePre301( confToml ) ) {
+			return LinkerProcessFromConfFilePre301.createInstance().getLinkerFromConfFile( filename );
+		}
 
-		if( metaMorphLinkerName == null )
-			throw new RuntimeException( "Error: Could not find a cross-linker defined in toml file: " + filename );
-		
-		if( metaMorphLinkerName.equals( "UserDefined" ) )
-			return getUserDefinedLinkerFromConfFile( confToml );
-		
-		if( MetaMorphLinkerFactory.getLinker( metaMorphLinkerName ) == null )
-			throw new RuntimeException( "Unable to load linker information for: " + metaMorphLinkerName );
-				
-		return MetaMorphLinkerFactory.getLinker( metaMorphLinkerName );
-		
-	}
+		Toml XlSearchParameters = confToml.getTable( "XlSearchParameters" );
+		if( XlSearchParameters == null )
+			throw new Exception( "Could not find XlSearchParameters section in toml config file." );
 
-	/**
-	 * Get a MetaMorphLinker for a user-defined linker in a toml file
-	 *
-	 * @param confToml
-	 * @return
-	 * @throws IOException
-	 */
-	public MetaMorphLinker getUserDefinedLinkerFromConfFile( Toml confToml ) throws Exception {
+		Toml CrosslinkerParams = XlSearchParameters.getTable( "Crosslinker" );
+		if( CrosslinkerParams == null )
+			throw new Exception( "Could not find Crosslinker subsection in XlkSearchParameters in toml config file." );
 
-		Toml xlSearchParamters = confToml.getTable("XlSearchParameters");
-
-		if (xlSearchParamters == null)
-			throw new Exception("Could not find XlSearchParameters in config toml. Cannot proceed.");
-
-		Collection<String> linkerCrosslinkMassNames = new HashSet<>();
-		linkerCrosslinkMassNames.add("UdXLkerTotalMass");
-		linkerCrosslinkMassNames.add("UdXLkerLoopMass");
-		linkerCrosslinkMassNames.add("CrosslinkerTotalMass");
-
-		Collection<String> linkerDeadEndMassNames = new HashSet<>();
-		linkerDeadEndMassNames.add("UdXLkerDeadendMassH2O");
-		linkerDeadEndMassNames.add("UdXLkerDeadendMassNH2");
-		linkerDeadEndMassNames.add("UdXLkerDeadendMassTris");
-		linkerDeadEndMassNames.add("CrosslinkerDeadEndMassH2O");
-		linkerDeadEndMassNames.add("CrosslinkerDeadEndMassNH2");
-		linkerDeadEndMassNames.add("CrosslinkerDeadEndMassTris");
-
-		Collection<String> linkerCleavedLinkerMassNames = new HashSet<>();
-		linkerCleavedLinkerMassNames.add("CrosslinkerShortMass");
-		linkerCleavedLinkerMassNames.add("CrosslinkerLongMass");
 
 		MetaMorphLinker linker = new MetaMorphLinker();
 
+		linker.setMetaMorphName( CrosslinkerParams.getString( "CrosslinkerName" ) );
+		linker.setProxlName( CrosslinkerParams.getString( "CrosslinkerName" ) );
+		linker.getCrosslinkMasses().add( CrosslinkerParams.getDouble( "TotalMass" ) );
+
+		// add in both linked ends
 		List<MetaMorphLinkerEnd> linkerEnds = new ArrayList<>(2);
 		linker.setLinkerEnds(linkerEnds);
 
-		// handle linker name
-		{
-			String name = null;
-			if( xlSearchParamters.getString("UdXLkerName") != null ) {
-				name = xlSearchParamters.getString("UdXLkerName");
-			} else if( xlSearchParamters.getString("CrosslinkerName") != null ) {
-				name = xlSearchParamters.getString("CrosslinkerName");
-			} else {
-				throw new Exception( "Could not find linker name in config toml. Cannot proceed." );
+		for( String key : new String[] {"CrosslinkerModSites", "CrosslinkerModSites2"} ) {
+
+			String residuesField = CrosslinkerParams.getString( key );
+			Collection<String> residues = new HashSet<>();
+
+			for (int i = 0; i < residuesField.length(); i++) {
+				String residue = String.valueOf(residuesField.charAt(i));
+				residues.add(residue);
 			}
 
-			linker.setMetaMorphName( name );
-			linker.setProxlName( name.toLowerCase() );
+			MetaMorphLinkerEnd linkerEnd = new MetaMorphLinkerEnd(residues, false, false);
+			linkerEnds.add(linkerEnd);
 		}
 
-		// handle cleavability
-		linker.setCleavable( xlSearchParamters.getBoolean( "IsCleavable" ) );
+		// add in mono-link masses
+		for( String key : new String[] {"H2O", "Tris", "NH2"} ) {
 
-		// handle linker end 1
-		{
-			if( xlSearchParamters.getString( "CrosslinkerResidues" ) != null ) {
+			String shouldBeIncludedKey = "XlQuench_" + key;
+			String definitionKey = "DeadendMass" + key;
 
-				String residuesField = xlSearchParamters.getString( "CrosslinkerResidues" );
-				Collection<String> residues = new HashSet<>();
-
-				for (int i = 0; i < residuesField.length(); i++){
-					String residue = String.valueOf(residuesField.charAt(i));
-					residues.add( residue );
+			if( XlSearchParameters.getBoolean( shouldBeIncludedKey ) != null && XlSearchParameters.getBoolean( shouldBeIncludedKey ) ) {
+				if( CrosslinkerParams.getDouble( definitionKey ) != null ) {
+					linker.getMonolinkMasses().add( CrosslinkerParams.getDouble( definitionKey ) );
 				}
-
-				MetaMorphLinkerEnd linkerEnd = new MetaMorphLinkerEnd( residues, false, false );
-				linkerEnds.add( linkerEnd );
 			}
 		}
 
-		// handle linker end 2
-		{
-			if( xlSearchParamters.getString( "CrosslinkerResidues2" ) != null ) {
+		// add in cleavable info
+		linker.setCleavable( CrosslinkerParams.getBoolean( "Cleavable" ) );
 
-				String residuesField = xlSearchParamters.getString( "CrosslinkerResidues2" );
-				Collection<String> residues = new HashSet<>();
-
-				for (int i = 0; i < residuesField.length(); i++){
-					String residue = String.valueOf(residuesField.charAt(i));
-					residues.add( residue );
-				}
-
-				MetaMorphLinkerEnd linkerEnd = new MetaMorphLinkerEnd( residues, false, false );
-				linkerEnds.add( linkerEnd );
-			}
-		}
-
-		// handle cross-linker mass
-		for( String key : linkerCrosslinkMassNames ) {
-			if( xlSearchParamters.getDouble( key ) != null ) {
-
-				if( linker.getCrosslinkMasses() == null )
-					linker.setCrosslinkMasses( new HashSet<>() );
-
-				linker.getCrosslinkMasses().add( xlSearchParamters.getDouble( key ) );
-				break;	// don't need to keep looking
-			}
-		}
-
-		// handle mono-links
-		for( String key : linkerDeadEndMassNames ) {
-			if( xlSearchParamters.getDouble( key ) != null ) {
-
-				if( linker.getMonolinkMasses() == null )
-					linker.setMonolinkMasses( new HashSet<>() );
-
-				linker.getMonolinkMasses().add( xlSearchParamters.getDouble( key ) );
-			}
-		}
-
-		// handle cleaved linker masses
-		for( String key : linkerCleavedLinkerMassNames ) {
-			if( xlSearchParamters.getDouble( key ) != null ) {
-
-				if( linker.getCleavedCrosslinkMasses() == null )
-					linker.setCleavedCrosslinkMasses( new HashSet<>() );
-
-				linker.getCleavedCrosslinkMasses().add( xlSearchParamters.getDouble( key ) );
-			}
-		}
-
-		if( linker.getMonolinkMasses() == null )
-			System.err.println( "\tWarning: Got no monolink/deadend masses defined for linker in config toml file." );
-		
-		if( linker.getCrosslinkMasses() == null )
-			throw new RuntimeException( "\tError: Got no cross-link massess defined for linker in config toml file." );
-
-		if( linkerEnds.size() != 2 ) {
-			throw new RuntimeException( "\tError. Did not get two linkable ends of the cross-linker." );
+		if( linker.isCleavable() ) {
+			linker.getCleavedCrosslinkMasses().add( CrosslinkerParams.getDouble( "CleaveMassShort" ) );
+			linker.getCleavedCrosslinkMasses().add( CrosslinkerParams.getDouble( "CleaveMassLong" ) );
 		}
 
 		return linker;
 	}
 
+
 	/**
-	 * Get the name of the cross-linker from the toml file. Return null if one isn't found.
+	 * Is the conf file pre 0.0.301? From 0.0.301 onward, cross-linker parameters are stored in the config
+	 * file in a more consistent way.
 	 *
 	 * @param confToml
 	 * @return
-	 * @throws IOException
 	 */
-	public String getLinkerNameFromConfFile( Toml confToml ) throws IOException {
+	private boolean getIsConfFilePre301(Toml confToml) {
 
-		Toml xlSearchParamters = confToml.getTable( "XlSearchParameters" );
+		Toml XlSearchParameters = confToml.getTable( "XlSearchParameters" );
+		if( XlSearchParameters != null && XlSearchParameters.getTable( "Crosslinker" ) != null ) {
+			return false;
+		}
 
-		if( xlSearchParamters != null )
-			return xlSearchParamters.getString( "CrosslinkerType" );
-
-		return null;
+		return true;
 	}
-	
-	
+
 }
