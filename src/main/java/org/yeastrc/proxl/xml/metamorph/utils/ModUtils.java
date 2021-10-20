@@ -36,6 +36,10 @@ public class ModUtils {
 	
 	
 	public static String getResidueAtPosition( MetaMorphPeptide peptide, int position ) {
+
+		if(position == 0) { return "n"; }		// n-terminus
+		if(position == peptide.getSequence().length() + 1) { return "c"; } // c-terminus
+
 		return peptide.getSequence().substring( position - 1, position );
 	}
 	
@@ -45,7 +49,10 @@ public class ModUtils {
 			return false;
 		
 		for( int position : peptide.getModifications().keySet() ) {
-			
+
+			if(position == 0) { return true; }		// no static mods on n-terminus
+			if(position == peptide.getSequence().length() + 1) { return true; } // no static mods on c-terminus
+
 			String residue = getResidueAtPosition( peptide, position );
 			if( !staticMods.containsKey( residue ) )
 				return true;	// not a static mod

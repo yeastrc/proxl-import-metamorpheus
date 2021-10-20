@@ -250,10 +250,17 @@ public class XMLBuilder {
 								
 								Modification xmlModification = new Modification();
 								xmlModifications.getModification().add( xmlModification );
-								
+
 								xmlModification.setMass( modMass );
-								xmlModification.setPosition( new BigInteger( String.valueOf( position ) ) );
 								xmlModification.setIsMonolink( ModUtils.isDeadEndMod( modMass.doubleValue(), analysis.getLinker() ) );
+
+								if(position == 0) {
+									xmlModification.setIsNTerminal(true);
+								} else if(position == rp.getPeptide1().getSequence().length() + 1) {
+									xmlModification.setIsCTerminal(true);
+								} else {
+									xmlModification.setPosition( new BigInteger( String.valueOf( position ) ) );
+								}
 
 							}
 						}
@@ -307,9 +314,16 @@ public class XMLBuilder {
 								xmlModifications.getModification().add( xmlModification );
 								
 								xmlModification.setMass( modMass );
-								xmlModification.setPosition( new BigInteger( String.valueOf( position ) ) );
 								xmlModification.setIsMonolink( ModUtils.isDeadEndMod( modMass.doubleValue(), analysis.getLinker() ) );
-								
+
+								if(position == 0) {
+									xmlModification.setIsNTerminal(true);
+								} else if(position == rp.getPeptide2().getSequence().length() + 1) {
+									xmlModification.setIsCTerminal(true);
+								} else {
+									xmlModification.setPosition( new BigInteger( String.valueOf( position ) ) );
+								}
+
 							}
 						}
 					}

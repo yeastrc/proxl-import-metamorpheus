@@ -187,17 +187,34 @@ public class StaticModProcessor {
 	 * @param foundMods
 	 */
 	private void addModsToFoundMods( MetaMorphPeptide peptide, Map<String, Collection<BigDecimal>> foundMods ) {
-				
+
 		if( peptide.getModifications() == null || peptide.getModifications().keySet().size() < 1 )
 			return;
-		
+
+		System.out.println(peptide);
+		System.out.println("mod:");
 		for( int position : peptide.getModifications().keySet() ) {
-			String residue = peptide.getSequence().substring( position - 1, position );
-			
-			if( !foundMods.containsKey( residue ) )
-				foundMods.put( residue, new HashSet<>() );
-			
-			foundMods.get( residue ).addAll( peptide.getModifications().get( position ) );
+			System.out.println("\t" + position);
+		}
+
+		for( int position : peptide.getModifications().keySet() ) {
+			String residue = null;
+
+			if(position == 0) {
+				residue = "n";
+			} else if(position == peptide.getSequence().length() + 1) {
+				residue = "c";
+			} else {
+				residue = peptide.getSequence().substring( position - 1, position );
+			}
+
+			// assume there are no static mods defined for n- or c-terminus
+			if(!(residue.equals("n")) && !(residue.equals("c"))) {
+				if (!foundMods.containsKey(residue))
+					foundMods.put(residue, new HashSet<>());
+
+				foundMods.get(residue).addAll(peptide.getModifications().get(position));
+			}
 		}
 	}
 	

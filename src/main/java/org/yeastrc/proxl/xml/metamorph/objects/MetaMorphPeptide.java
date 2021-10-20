@@ -80,6 +80,44 @@ public class MetaMorphPeptide {
 				}
 			}
 		}
+
+		// handle n-terminal mod
+		if(this.getModifications() != null && this.getModifications().containsKey(0)) {
+			List<String> modsAtPosition = new ArrayList<String>();
+			for( BigDecimal mod : this.getModifications().get( 0 ) ) {
+				modsAtPosition.add( mod.setScale( 2, BigDecimal.ROUND_HALF_UP ).toString() );
+			}
+
+			// sort these strings on double values
+			Collections.sort( modsAtPosition, new Comparator<String>() {
+				public int compare(String s1, String s2) {
+					return Double.valueOf( s1 ).compareTo( Double.valueOf( s2 ) );
+				}
+			});
+
+			String modsString = StringUtils.join( modsAtPosition, "," );
+
+			str = "n[" + modsString + "]" + str;
+		}
+
+		// handle c-terminal mod
+		if(this.getModifications() != null && this.getModifications().containsKey(this.getSequence().length() + 1)) {
+			List<String> modsAtPosition = new ArrayList<String>();
+			for( BigDecimal mod : this.getModifications().get( this.getSequence().length() + 1 ) ) {
+				modsAtPosition.add( mod.setScale( 2, BigDecimal.ROUND_HALF_UP ).toString() );
+			}
+
+			// sort these strings on double values
+			Collections.sort( modsAtPosition, new Comparator<String>() {
+				public int compare(String s1, String s2) {
+					return Double.valueOf( s1 ).compareTo( Double.valueOf( s2 ) );
+				}
+			});
+
+			String modsString = StringUtils.join( modsAtPosition, "," );
+
+			str =  str + "c[" + modsString + "]";
+		}
 		
 		return str;
 	}
