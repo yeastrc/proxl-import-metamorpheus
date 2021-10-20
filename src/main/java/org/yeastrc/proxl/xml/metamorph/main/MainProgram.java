@@ -60,6 +60,9 @@ public class MainProgram implements Runnable {
 	@CommandLine.Option(names = { "-f", "--fasta-file" }, required = true, description = "Full path to FASTA file used in the experiment.")
 	private File fastaFile;
 
+	@CommandLine.Option(names = { "-v", "--verbose" }, required = false, description = "If present, complete error messages will be printed. Useful for debugging errors.")
+	private boolean verboseRequested = false;
+
 	@CommandLine.Option(names = { "-c", "--conf" },  required = true, description = "The full path to the configuration file used in the MetaMorpheus search (e.g. XLSearchTaskconfig.toml).")
 	private File confFile;
 
@@ -158,6 +161,11 @@ public class MainProgram implements Runnable {
 
         	System.out.println( "\nError encountered:" );
         	System.out.println( t.getMessage() );
+
+        	if(verboseRequested) {
+        		t.printStackTrace();
+			}
+
         	System.exit( 1 );
 
 		}
