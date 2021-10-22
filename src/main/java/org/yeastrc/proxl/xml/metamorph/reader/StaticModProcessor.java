@@ -191,12 +191,6 @@ public class StaticModProcessor {
 		if( peptide.getModifications() == null || peptide.getModifications().keySet().size() < 1 )
 			return;
 
-		System.out.println(peptide);
-		System.out.println("mod:");
-		for( int position : peptide.getModifications().keySet() ) {
-			System.out.println("\t" + position);
-		}
-
 		for( int position : peptide.getModifications().keySet() ) {
 			String residue = null;
 
